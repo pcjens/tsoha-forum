@@ -28,20 +28,21 @@ pip install -r requirements.txt
 cp .env.sample .env
 ```
 
-Configure `.env` to fit your system and needs. Note that the user and
-database should exist before running the server, so if your
-DATABASE_URL is set to `postgresql://username@localhost/tsohadb`, you
-could create the database in the following way:
+Configure `.env` to fit your system and needs. The user and database
+specified in `DATABASE_URL` should exist before running the server.
+
+Example: say your username is `foo`. Set DATABASE_URL to
+`postgresql://foo@localhost/tsohadb`, and then create the role
+("database user") and database can be like so:
 
 ```sql
-CREATE ROLE username WITH LOGIN;
-CREATE DATABASE tsohadb WITH OWNER username;
+CREATE ROLE foo WITH LOGIN;
+CREATE DATABASE tsohadb WITH OWNER foo;
 ```
 
-Note that `username` should be the same as the system user you use to
-run the server. This might not work on all PostgreSQL installs, in
-which case I recommend getting familiar with your distribution's
-PostgreSQL setup beforehand.
+Authentication by matching username might not work on all PostgreSQL
+installs, in which case I recommend getting familiar with your
+distribution's PostgreSQL setup beforehand.
 
 After you have configured `.env` and your database, start the server
 with:
