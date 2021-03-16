@@ -19,17 +19,27 @@ A forum, written for tsoha.
 
 Requirements: Python 3 and pip.
 
-Run the following commands to get the server running on your machine:
+Run the following to install the prerequisites onto your machine:
 
 ```sh
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+cp .env.sample .env
+```
+
+Configure `.env` to fit your system and needs, and then:
+
+```sh
 flask run
 ```
 
-Note: when deploying for production usage, there should be a reverse
-proxy that accepts HTTPS connections in front of this server, to avoid
+After this initial setup, you only need to run `source
+venv/bin/activate` before `flask run` to run the server again if you
+log out (or close the terminal) in between sessions .
+
+When deploying for production usage, there should be a reverse proxy
+that accepts HTTPS connections in front of this server, to avoid
 leaking sensitive information.
 
 ## License
