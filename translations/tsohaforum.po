@@ -1,0 +1,15 @@
+#: ../forum/templates/index.html:5
+msgid "Forum"
+msgstr ""
+
+#: ../forum/templates/index.html:9
+msgid "Welcome to the forum. A message from the database:"
+msgstr ""
+
+#: ../forum/templates/index.html:22
+msgid "Change language"
+msgstr ""
+
+# leave this as is, it is for utf-8 support
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ _("Forum") }}</title>
+  </head>
+  <body>
+    <p>
+      {{ _("Welcome to the forum. A message from the database:") }}
+      <blockquote>
+        {{ message }}
+      </blockquote>
+    </p>
+    <form action="/change_language" method="POST">
+      <select name="new_language">
+        <!-- TODO(security): CSRF protection -->
+        {% for language in languages %}
+        <option {% if language == current_language %}selected{% endif %}>{{ language }}</option>
+        {% endfor %}
+      </select>
+      <input type="hidden" name="redirect_url" value="{{ current_path }}">
+      <button type="submit">{{ _("Change language") }}</button>
+    </form>
+  </body>
+</html>

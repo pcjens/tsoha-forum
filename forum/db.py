@@ -19,7 +19,7 @@ def run_migrations(app):
     while True:
         try:
             next_db_version = db_version + 1
-            with open("migrations/version_{}.sql".format(next_db_version), "r") as migration_sql:
+            with open("forum/migrations/version_{}.sql".format(next_db_version), "r") as migration_sql:
                 app.logger.info("Migrating to version {}.".format(next_db_version))
                 sql = migration_sql.read()
                 db.session.execute(sql)
@@ -45,4 +45,4 @@ def setup(app):
 
 def get_hello():
     version = db.session.execute("select version from forum_schema_version").fetchone()[0]
-    return "<pre>Hi! My database schema version is {}.</pre>".format(version)
+    return "Hi! My database schema version is {}.".format(version)
