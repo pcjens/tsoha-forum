@@ -5,37 +5,31 @@ import gettext
 import os
 
 def setup(app):
-    jinja_env = Environment(
-        loader = PackageLoader("forum", "templates"),
-        autoescape = select_autoescape(["html"]),
-        extensions = ["jinja2.ext.i18n"]
-    )
-    jinja_env.policies["ext.i18n.trimmed"] = True
+    def make_jinja_env(lang, use_null_translations):
+        jinja_env = Environment(
+            loader = PackageLoader("forum", "templates"),
+            autoescape = select_autoescape(["html"]),
+            extensions = ["jinja2.ext.i18n"]
+        )
+        jinja_env.policies["ext.i18n.trimmed"] = True
+        if use_null_translations:
+            translations = gettext.NullTranslations()
+        else:
+            translations = gettext.translation("tsohaforum", "translations/", languages = [lang])
+        jinja_env.install_gettext_translations(translations, newstyle = True)
+        return jinja_env
 
-    translations = {}
+    jinja_envs = {}
     for lang in os.listdir("translations/"):
         if os.path.isdir("translations/{}".format(lang)):
-            translations[lang] = gettext.translation("tsohaforum", "translations/", languages = [lang])
-    translations["en"] = gettext.NullTranslations()
+            jinja_envs[lang] = make_jinja_env(lang, False)
+    jinja_envs["en"] = make_jinja_env("en", True)
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
-
-
-    @request_started.connect_via(app)
-    def handle_translations_for_request(sender):
-        """At the start of each request, the correct translations are
-        installed.
-
-        TODO(optimization): Installing new translations for every request is probably quite slow.
-        """
-        if "lang" in session and session["lang"] in translations:
-            jinja_env.install_gettext_translations(translations[session["lang"]], newstyle = True)
-        else:
-            jinja_env.install_gettext_translations(translations[default_lang], newstyle = True)
 
     @request_started.connect_via(app)
     def populate_global_template_vars(sender):
         g.global_template_vars = {
-            "languages": list(translations),
+            "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
             "current_path": request.path
         }
@@ -43,6 +37,7 @@ def setup(app):
 
     @app.route("/")
     def index():
+        jinja_env = jinja_envs[session.get("lang", default_lang)]
         template = jinja_env.get_template("index.html")
         variables = { "message": db.get_hello() }
         variables.update(g.global_template_vars)
