@@ -42,6 +42,8 @@ def setup(app):
     if url == None or len(url) == 0:
         app.logger.error("DATABASE_URL is not specified!")
         return False
+    else:
+        url = url.replace("postgres://", "postgresql://")
     app.config["SQLALCHEMY_DATABASE_URI"] = url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db = SQLAlchemy(app)
