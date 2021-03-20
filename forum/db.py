@@ -35,13 +35,18 @@ def run_migrations(app):
 
 
 def setup(app):
-    """Connects to the PostgreSQL database and runs migrations if needed."""
+    """Connects to the PostgreSQL database and runs migrations if needed, returning False on errors."""
 
     global db
-    app.config["SQLALCHEMY_DATABASE_URI"] = getenv("DATABASE_URL")
+    url = getenv("DATABASE_URL")
+    if url == None or len(url) == 0:
+        app.logger.error("DATABASE_URL is not specified!")
+        return False
+    app.config["SQLALCHEMY_DATABASE_URI"] = url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     db = SQLAlchemy(app)
     run_migrations(app)
+    return True
 
 def get_hello():
     version = db.session.execute("select version from forum_schema_version").fetchone()[0]

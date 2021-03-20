@@ -5,5 +5,7 @@ import forum.routes as routes
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
-db.setup(app)
+db_setup_successfully = db.setup(app)
+if not db_setup_successfully:
+    exit(1)
 routes.setup(app)
