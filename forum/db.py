@@ -38,7 +38,7 @@ def setup(app):
     """Connects to the PostgreSQL database and runs migrations if needed, returning False on errors."""
 
     global db
-    url = getenv("DATABASE_URL")
+    url = getenv("DATABASE_URL").replace("postgres://", "postgresql://")
     if url == None or len(url) == 0:
         app.logger.error("DATABASE_URL is not specified!")
         return False
