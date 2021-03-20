@@ -33,7 +33,7 @@ specified in `DATABASE_URL` should exist before running the server.
 
 Example: say your username is `foo`. Set DATABASE_URL to
 `postgresql://foo@localhost/tsohadb`, and then create the role
-("database user") and database can be like so:
+("database user") and database as follows:
 
 ```sql
 CREATE ROLE foo WITH LOGIN;
