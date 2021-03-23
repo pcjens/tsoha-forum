@@ -19,4 +19,6 @@ jobs:
         pip install wheel
         pip install -r requirements.txt
     - name: Run analysis
-      run: sh check.sh
+      run: |
+        source venv/bin/activate
+        sh check.sh
