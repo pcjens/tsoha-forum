@@ -1,11 +1,14 @@
-from flask import Flask
+"""A forum server using Flask and SQLAlchemy."""
+
+import sys
 from os import getenv
-import forum.db as db
-import forum.routes as routes
+from flask import Flask
+import forum.database
+import forum.routes
 
 app = Flask(__name__)
 app.secret_key = getenv("SECRET_KEY")
-db_setup_successfully = db.setup(app)
-if not db_setup_successfully:
-    exit(1)
-routes.setup(app)
+database = forum.database.setup(app)
+if database is None:
+    sys.exit(1)
+forum.routes.setup(app, database)
