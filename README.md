@@ -20,6 +20,23 @@ list of concrete features to be filled out as the project develops:
 - [ ] Administrators can create secret boards, and specify which users
       have access to it.
 
+Technical features / highlights:
+
+- [x] The site is translatable to (most) other languages with
+      gettext-style translations, and has an example translation for
+      Finnish. This is achieved with Jinja2's support for
+      gettext-based translations.
+- [x] The forum is backwards-compatible database-wise, older versions
+      of the database are automatically migrated to new versions. This
+      functionality does not come from a library, it is implemented in
+      [forum.database.run_migrations()](https://github.com/pcjens/tsoha-forum/blob/main/forum/database.py).
+- [x] All of the code is typechecked and linted with GitHub Actions,
+      ensuring that the entire code base is type-safe (within reason,
+      some library interfaces require `Any` usage) and does not have
+      obvious, pylint-recognized issues. This is implemented in the
+      [static-analysis](https://github.com/pcjens/tsoha-forum/actions/workflows/static-analysis.yml)
+      workflow, using pylint (general lints) and mypy (typechecking).
+
 Additional fun features as time allows (I don't necessarily expect to
 do any of these, let alone all of them):
 
