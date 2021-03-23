@@ -76,6 +76,7 @@ Run the following to install the prerequisites onto your machine:
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
+# or: pip install flask flask-sqlalchemy jinja2 mypy pylint psycopg2-binary gunicorn python-dotenv
 cp .env.sample .env
 ```
 

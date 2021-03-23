@@ -40,21 +40,16 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     jinja_envs["en"] = make_jinja_env("en", True)
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
 
-    @request_started.connect_via(app)
-    def populate_global_template_vars(sender: Any) -> None:
-        g.global_template_vars = {
-            "languages": list(jinja_envs),
-            "current_language": session.get("lang", default_lang),
-            "current_path": request.path
-        }
-
-
     @app.route("/")
     def index() -> Any:
         jinja_env = jinja_envs[session.get("lang", default_lang)]
         template = jinja_env.get_template("index.html")
-        variables = { "message": database.get_hello() }
-        variables.update(g.global_template_vars)
+        variables = {
+            "message": database.get_hello(),
+            "languages": list(jinja_envs),
+            "current_language": session.get("lang", default_lang),
+            "current_path": request.path
+        }
         return template.render(variables)
 
     @app.route("/change_language", methods = ["POST"])

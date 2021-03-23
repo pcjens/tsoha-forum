@@ -1,3 +1,3 @@
 #!/bin/sh
-mypy forum --strict --allow-untyped-decorators
+mypy forum --strict
 pylint forum
