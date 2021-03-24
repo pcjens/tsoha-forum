@@ -6,6 +6,8 @@
 
 import gettext
 import os
+from functools import wraps
+from collections.abc import Callable
 from typing import Any
 from jinja2 import Environment, PackageLoader, select_autoescape
 from flask import session, request, redirect, Flask
@@ -40,20 +42,28 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     jinja_envs["en"] = make_jinja_env("en", True)
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
 
+    def templated(template_path: str) -> Callable[..., Any]:
+        def decorator(route: Callable[..., dict[str, Any]]) -> Callable[..., Any]:
+            @wraps(route)
+            def decorated_function(*args: Any, **kwargs: Any) -> Any:
+                jinja_env = jinja_envs[session.get("lang", default_lang)]
+                template = jinja_env.get_template(template_path)
+                variables = route(*args, **kwargs)
+                variables.update({
+                    "languages": list(jinja_envs),
+                    "current_language": session.get("lang", default_lang),
+                    "current_path": request.path
+                })
+                return template.render(variables)
+            return decorated_function
+        return decorator
+
     @app.route("/")
+    @templated("index.html")
     def index() -> Any:
-        jinja_env = jinja_envs[session.get("lang", default_lang)]
-        template = jinja_env.get_template("index.html")
-        variables = {
-            "message": database.get_hello(),
-            "languages": list(jinja_envs),
-            "current_language": session.get("lang", default_lang),
-            "current_path": request.path
-        }
-        return template.render(variables)
+        return { "message": database.get_hello() }
 
     @app.route("/change_language", methods = ["POST"])
     def change_language() -> Response:
-        app.logger.info("Change lang to: " + request.form["new_language"])
         session["lang"] = request.form["new_language"]
         return redirect(request.form["redirect_url"])
