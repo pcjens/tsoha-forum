@@ -4,11 +4,15 @@
 # architecture causes a lot of false positives, so they're disabled.
 # pylint: disable = W0612, W0613
 
+# The pylint error E1136 seems to be broken for type annotations:
+# https://github.com/PyCQA/pylint/issues/2822
+# pylint: disable = E1136
+
 import gettext
 import os
 from functools import wraps
 from collections.abc import Callable
-from typing import Any
+from typing import Any, Dict
 from jinja2 import Environment, PackageLoader, select_autoescape
 from flask import session, request, redirect, Flask
 from werkzeug import Response
@@ -43,7 +47,7 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
 
     def templated(template_path: str) -> Callable[..., Any]:
-        def decorator(route: Callable[..., dict[str, Any]]) -> Callable[..., Any]:
+        def decorator(route: Callable[..., Dict[str, Any]]) -> Callable[..., Any]:
             @wraps(route)
             def decorated_function(*args: Any, **kwargs: Any) -> Any:
                 jinja_env = jinja_envs[session.get("lang", default_lang)]
