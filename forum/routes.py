@@ -11,8 +11,7 @@
 import gettext
 import os
 from functools import wraps
-from collections.abc import Callable
-from typing import Any, Dict
+from typing import Any, Dict, Callable
 from jinja2 import Environment, PackageLoader, select_autoescape
 from flask import session, request, redirect, Flask
 from werkzeug import Response
