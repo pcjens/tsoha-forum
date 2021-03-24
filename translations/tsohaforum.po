@@ -1,13 +1,33 @@
-#: ../forum/templates/index.html:5
+#: ../forum/templates/base.html:5
 msgid "Forum"
 msgstr ""
 
-#: ../forum/templates/index.html:9
+#: ../forum/templates/base.html:37
+msgid "Change language"
+msgstr ""
+
+#: ../forum/templates/index.html:4
 msgid "Welcome to the forum. A message from the database:"
 msgstr ""
 
-#: ../forum/templates/index.html:22
-msgid "Change language"
+#: ../forum/templates/login.html:37 ../forum/templates/login.html:48
+msgid "Log in"
+msgstr ""
+
+#: ../forum/templates/login.html:40 ../forum/templates/login.html:55
+msgid "Username"
+msgstr ""
+
+#: ../forum/templates/login.html:44 ../forum/templates/login.html:59
+msgid "Password"
+msgstr ""
+
+#: ../forum/templates/login.html:52 ../forum/templates/login.html:67
+msgid "Register"
+msgstr ""
+
+#: ../forum/templates/login.html:63
+msgid "Confirm password"
 msgstr ""
 
 # leave this as is, it is for utf-8 support

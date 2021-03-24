@@ -46,19 +46,23 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     jinja_envs["en"] = make_jinja_env("en", True)
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
 
-    def templated(template_path: str) -> Callable[..., Any]:
+    def fill_and_render_template(template_path: str, variables: Dict[str, Any]) -> Any:
+        jinja_env = jinja_envs[session.get("lang", default_lang)]
+        template = jinja_env.get_template(template_path)
+        variables.update({
+            "languages": list(jinja_envs),
+            "current_language": session.get("lang", default_lang),
+            "current_path": request.path
+        })
+        return template.render(variables)
+
+    def templated(template_path: str, login_required: bool = True) -> Callable[..., Any]:
         def decorator(route: Callable[..., Dict[str, Any]]) -> Callable[..., Any]:
             @wraps(route)
             def decorated_function(*args: Any, **kwargs: Any) -> Any:
-                jinja_env = jinja_envs[session.get("lang", default_lang)]
-                template = jinja_env.get_template(template_path)
-                variables = route(*args, **kwargs)
-                variables.update({
-                    "languages": list(jinja_envs),
-                    "current_language": session.get("lang", default_lang),
-                    "current_path": request.path
-                })
-                return template.render(variables)
+                if login_required and not database.logged_in(session.get("user_id")):
+                    return fill_and_render_template("login.html", {})
+                return fill_and_render_template(template_path, route(*args, **kwargs))
             return decorated_function
         return decorator
 

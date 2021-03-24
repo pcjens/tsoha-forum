@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>{{ _("Forum") }}</title>
+    <style>
+      #language-selector {
+          display: block;
+          position: absolute;
+          right: 10px;
+          top: 10px;
+          padding: 5px;
+      }
+
+      #skip-nav-link {
+          display: block;
+          position: absolute;
+          top: 0px;
+          width: 100%;
+          text-align: center;
+      }
+      #skip-nav-link:not(:focus) { opacity: 0; }
+
+      /* A class for elements (mostly <br>s) which improve usability
+       * for browsers that don't support CSS at all. */
+      .for-no-css { display: none; }
+    </style>
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <a id="skip-nav-link" href="#content">Skip to content</a>
+    <!-- TODO(accessibility): ARIA labels -->
+    <form id="language-selector" action="/change_language" method="POST">
+      <!-- TODO(security): CSRF protection -->
+      <select name="new_language">
+        {% for language in languages %}
+        <option {% if language == current_language %}selected{% endif %}>{{ language }}</option>
+        {% endfor %}
+      </select>
+      <input type="hidden" name="redirect_url" value="{{ current_path }}">
+      <button type="submit">{{ _("Change language") }}</button>
+    </form>
+    <article id="content">
+      {% block content %}{% endblock %}
+    </article>
+  </body>
+</html>

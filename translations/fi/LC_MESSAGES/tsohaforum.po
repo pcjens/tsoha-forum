@@ -1,15 +1,36 @@
-#: ../forum/templates/index.html:5
+#: ../forum/templates/base.html:5
 msgid "Forum"
 msgstr "Foorumi"
 
-#: ../forum/templates/index.html:9
+#: ../forum/templates/base.html:37
+msgid "Change language"
+msgstr "Vaihda kieltä"
+
+#: ../forum/templates/index.html:4
 msgid "Welcome to the forum. A message from the database:"
 msgstr "Tervetuloa foorumille. Viesti tietokannasta:"
 
-#: ../forum/templates/index.html:22
-msgid "Change language"
-msgstr "Vaihda kieltä"
+#: ../forum/templates/login.html:37 ../forum/templates/login.html:48
+msgid "Log in"
+msgstr "Kirjaudu sisään"
+
+#: ../forum/templates/login.html:40 ../forum/templates/login.html:55
+msgid "Username"
+msgstr "Käyttäjätunnus"
+
+#: ../forum/templates/login.html:44 ../forum/templates/login.html:59
+msgid "Password"
+msgstr "Salasana"
+
+#: ../forum/templates/login.html:52 ../forum/templates/login.html:67
+msgid "Register"
+msgstr "Rekisteröidy"
+
+#: ../forum/templates/login.html:63
+msgid "Confirm password"
+msgstr "Vahvista salasana"
 
 # leave this as is, it is for utf-8 support
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
+

@@ -14,7 +14,21 @@ class ForumDatabase:
 
     def first_row_value(self, sql: str) -> Any:
         """Returns the first row returned by the given SQL query."""
-        return self.database.session.execute(sql).fetchone()[0]
+        result = self.database.session.execute(sql).fetchone()
+        if result is None:
+            return None
+        return result[0]
+
+    def logged_in(self, user_id: Optional[str]) -> bool:
+        """Returns true if the given user id is not None, and is an actual user's user id."""
+        if user_id is None:
+            return False
+        # FIXME(security): Rewrite login check, it's very SQL-injection-vulnerable currently
+        # (Not actually, since this is always called with a value from the session,
+        #  and we control the values in the session, but this isn't okay to keep around.)
+        possible_user = self.first_row_value("select * from users "
+                                             "where user_id = {}".format(user_id))
+        return possible_user is not None
 
     def get_hello(self) -> str:
         """Returns a friendly hello, which only works if the database works."""
