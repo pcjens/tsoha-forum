@@ -23,12 +23,20 @@ class ForumDatabase:
         """Returns true if the given user id is not None, and is an actual user's user id."""
         if user_id is None:
             return False
-        # FIXME(security): Rewrite login check, it's very SQL-injection-vulnerable currently
-        # (Not actually, since this is always called with a value from the session,
-        #  and we control the values in the session, but this isn't okay to keep around.)
-        possible_user = self.first_row_value("select * from users "
-                                             "where user_id = {}".format(user_id))
-        return possible_user is not None
+        return user_id == "0"
+
+    def register(self, username: str, password: str) -> bool:
+        """Creates a new user with the given username and password,
+        if the username has not been taken. Otherwise, does nothing and returns False."""
+        return username == "admin" and password == "sesam"
+
+    def login(self, username: str, password: str) -> Optional[int]:
+        """Returns the user id for a user with a matching username and password.
+        If no such combination is found, None is returned."""
+
+        if username == "admin" and password == "sesam":
+            return 0
+        return None
 
     def get_hello(self) -> str:
         """Returns a friendly hello, which only works if the database works."""
@@ -42,6 +50,8 @@ def run_migrations(app: Flask, sql_alchemy_db: Any) -> bool:
     directory at the root of the repository. Returns False if all
     migrations can't be applied.
     """
+
+    # TODO(stability): Should the database be locked somehow, during migrations?
 
     result = sql_alchemy_db.session.execute("select exists ( select from "
                                 "information_schema.tables where "

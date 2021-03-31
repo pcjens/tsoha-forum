@@ -1,9 +1,29 @@
 <!DOCTYPE html>
-<html>
+<html lang="{{ lang }}">
   <head>
     <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ _("Forum") }}</title>
+    <link rel="preconnect" href="https://fonts.gstatic.com">
+    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
     <style>
+      html { font-family: "Inter", system-ui; }
+      @media (prefers-color-scheme: light) {
+          html {
+              background-color: #FFFFFD;
+              color: #444;
+          }
+      }
+      @media (prefers-color-scheme: dark) {
+          html {
+              background-color: #222;
+              color: #AAA;
+          }
+      }
+
+      @media (prefers-color-scheme: light) { .error { color: #A11; } }
+      @media (prefers-color-scheme: dark) { .error { color: #E66; } }
+
       #language-selector {
           display: block;
           position: absolute;
@@ -16,13 +36,20 @@
           display: block;
           position: absolute;
           top: 0px;
+          left: 0px;
           width: 100%;
           text-align: center;
       }
       #skip-nav-link:not(:focus) { opacity: 0; }
 
-      /* A class for elements (mostly <br>s) which improve usability
-       * for browsers that don't support CSS at all. */
+      .inline-form {
+          display: inline-block;
+          margin-left: 8px;
+          margin-right: 8px;
+      }
+
+      /* A class for elements (mostly brs) which improve usability
+       * for browsers that do not support CSS at all. */
       .for-no-css { display: none; }
     </style>
     {% block head %}{% endblock %}
@@ -40,6 +67,22 @@
       <input type="hidden" name="redirect_url" value="{{ current_path }}">
       <button type="submit">{{ _("Change language") }}</button>
     </form>
+
+    <header>
+      <h1>{{ _("Forum") }}</h1>
+    </header>
+
+    {% if logged_in_user is not none %}
+    <aside>
+      {{ _("Logged in as %(username)s.", username=logged_in_user) }}
+      <form class="inline-form" action="/logout" method="POST">
+        <!-- TODO(security): CSRF protection -->
+        <input type="hidden" name="redirect_url" value="{{ current_path }}">
+        <button type="submit">{{ _("Logout") }}</button>
+      </form>
+    </aside>
+    {% endif %}
+
     <article id="content">
       {% block content %}{% endblock %}
     </article>

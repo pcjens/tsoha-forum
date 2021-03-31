@@ -46,12 +46,15 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
 
     def fill_and_render_template(template_path: str, variables: Dict[str, Any]) -> Any:
-        jinja_env = jinja_envs[session.get("lang", default_lang)]
+        lang = session.get("lang", default_lang)
+        jinja_env = jinja_envs[lang]
         template = jinja_env.get_template(template_path)
         variables.update({
+            "lang": lang,
             "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
-            "current_path": request.path
+            "current_path": request.path,
+            "logged_in_user": session.get("user_id")
         })
         return template.render(variables)
 
@@ -60,10 +63,20 @@ def setup(app: Flask, database: ForumDatabase) -> None:
             @wraps(route)
             def decorated_function(*args: Any, **kwargs: Any) -> Any:
                 if login_required and not database.logged_in(session.get("user_id")):
-                    return fill_and_render_template("login.html", {})
+                    login_params = {}
+                    if "error" in request.args:
+                        login_params["error"] = request.args["error"]
+                    return fill_and_render_template("login.html", login_params)
                 return fill_and_render_template(template_path, route(*args, **kwargs))
             return decorated_function
         return decorator
+
+    def redirect_form_error(error: str) -> Response:
+        base_url = request.form["redirect_url"]
+        param = "error=" + error
+        if "?" in base_url:
+            return redirect(base_url + "&" + param)
+        return redirect(base_url + "?" + param)
 
     @app.route("/")
     @templated("index.html")
@@ -74,3 +87,29 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     def change_language() -> Response:
         session["lang"] = request.form["new_language"]
         return redirect(request.form["redirect_url"])
+
+    @app.route("/logout", methods = ["POST"])
+    def logout() -> Response:
+        if "user_id" in session:
+            del session["user_id"]
+        return redirect(request.form["redirect_url"])
+
+    @app.route("/login", methods = ["POST"])
+    def login() -> Response:
+        user_id = database.login(request.form["username"], request.form["password"])
+        if user_id is not None and database.logged_in(str(user_id)):
+            session["user_id"] = user_id
+            return redirect(request.form["redirect_url"])
+        return redirect_form_error("invalid_credentials")
+
+    @app.route("/register", methods = ["POST"])
+    def register() -> Any:
+        username = request.form["username"]
+        password = request.form["password"]
+        if password != request.form["confirm-password"]:
+            return redirect_form_error("passwords_dont_match")
+        if database.register(username, password):
+            user_id = database.login(username, password)
+            session["user_id"] = user_id
+            return redirect(request.form["redirect_url"])
+        return redirect_form_error("username_taken")

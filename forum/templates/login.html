@@ -3,8 +3,6 @@
 {% block head %}
 <style>
   .form-title { text-align: center; }
-  .form-input { width: 200px; }
-  .form-submit { width: fit-content; }
   .form-input, .form-submit {
       display: block;
       margin: auto;
@@ -13,7 +11,6 @@
   }
 
   .forms-container {
-      margin-top: 80px;
       display: flex;
       flex-flow: row wrap;
       justify-content: center;
@@ -27,6 +24,11 @@
       padding: 30px;
       padding-top: 10px;
   }
+  @media (max-width: 800px) {
+      .forms-container > .separator {
+          display: none;
+      }
+  }
 </style>
 {% endblock %}
 
@@ -35,6 +37,11 @@
   <form action="/login" method="POST">
     <h3 class="form-title">{{ _("Log in") }}</h3>
     <!-- TODO(security): CSRF protection -->
+
+    {% if error == "invalid_credentials" %}
+    <p class="error" role="alert">{{ _("Wrong username or password.") }}</p>
+    {% endif %}
+
     <label>
       {{ _("Username") }}
       <input class="form-input" type="text" name="username">
@@ -46,10 +53,17 @@
     <input type="hidden" name="redirect_url" value="{{ current_path }}">
     <button class="form-submit" type="submit">{{ _("Log in") }}</button>
   </form>
-  <p>or</p>
+  <p class="separator">{{ _("or") }}</p>
   <form action="/register" method="POST">
     <h3 class="form-title">{{ _("Register") }}</h3>
     <!-- TODO(security): CSRF protection -->
+
+    {% if error == "username_taken" %}
+    <p class="error" role="alert">{{ _("The username <b>%(username)s</b> is taken.", username=username) }}</p>
+    {% elif error == "passwords_dont_match" %}
+    <p class="error" role="alert">{{ _("The two passwords don't match.") }}</p>
+    {% endif %}
+
     <label>
       {{ _("Username") }}
       <input class="form-input" type="text" name="username">
