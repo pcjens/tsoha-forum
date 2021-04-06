@@ -1,35 +1,61 @@
-#: ../forum/templates/base.html:5
+# leave this as is, it is for utf-8 support
+msgid ""
+msgstr "Content-Type: text/plain; charset=UTF-8\n"
+
+#: ../forum/templates/base.html:6 ../forum/templates/base.html:72
 msgid "Forum"
 msgstr ""
 
-#: ../forum/templates/base.html:37
+#: ../forum/templates/base.html:68
 msgid "Change language"
+msgstr ""
+
+#: ../forum/templates/base.html:77
+#, python-format
+msgid "Logged in as %(username)s."
+msgstr ""
+
+#: ../forum/templates/base.html:81
+msgid "Logout"
 msgstr ""
 
 #: ../forum/templates/index.html:4
 msgid "Welcome to the forum. A message from the database:"
 msgstr ""
 
-#: ../forum/templates/login.html:37 ../forum/templates/login.html:48
+#: ../forum/templates/login.html:38 ../forum/templates/login.html:54
 msgid "Log in"
 msgstr ""
 
-#: ../forum/templates/login.html:40 ../forum/templates/login.html:55
+#: ../forum/templates/login.html:42
+msgid "Wrong username or password."
+msgstr ""
+
+#: ../forum/templates/login.html:46 ../forum/templates/login.html:68
 msgid "Username"
 msgstr ""
 
-#: ../forum/templates/login.html:44 ../forum/templates/login.html:59
+#: ../forum/templates/login.html:50 ../forum/templates/login.html:72
 msgid "Password"
 msgstr ""
 
-#: ../forum/templates/login.html:52 ../forum/templates/login.html:67
+#: ../forum/templates/login.html:56
+msgid "or"
+msgstr ""
+
+#: ../forum/templates/login.html:58 ../forum/templates/login.html:80
 msgid "Register"
 msgstr ""
 
-#: ../forum/templates/login.html:63
-msgid "Confirm password"
+#: ../forum/templates/login.html:62
+#, python-format
+msgid "The username <b>%(username)s</b> is taken."
 msgstr ""
 
-# leave this as is, it is for utf-8 support
-msgid ""
-msgstr "Content-Type: text/plain; charset=utf-8\n"
+#: ../forum/templates/login.html:64
+msgid "The two passwords don't match."
+msgstr ""
+
+#: ../forum/templates/login.html:76
+msgid "Confirm password"
+msgstr ""
