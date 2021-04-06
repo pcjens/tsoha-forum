@@ -3,11 +3,12 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
 #: ../forum/templates/base.html:5 ../forum/templates/base.html:6
-#: ../forum/templates/base.html:72
+#: ../forum/templates/base.html:72 ../forum/templates/base.html:77
 msgid "Forum"
 msgstr "Foorumi"
 
 #: ../forum/templates/base.html:37 ../forum/templates/base.html:68
+#: ../forum/templates/base.html:73
 msgid "Change language"
 msgstr "Vaihda kieltä"
 
@@ -39,12 +40,12 @@ msgstr "Rekisteröidy"
 msgid "Confirm password"
 msgstr "Vahvista salasana"
 
-#: ../forum/templates/base.html:77
+#: ../forum/templates/base.html:77 ../forum/templates/base.html:82
 #, python-format
 msgid "Logged in as %(username)s."
-msgstr "Kirjautuneena käyttäjällä %(username)s."
+msgstr "Kirjautuneena käyttäjälle %(username)s."
 
-#: ../forum/templates/base.html:81
+#: ../forum/templates/base.html:81 ../forum/templates/base.html:86
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
@@ -64,3 +65,15 @@ msgstr "Käyttäjätunnus<b>%(username)</b> on varattu."
 #: ../forum/templates/login.html:64
 msgid "The two passwords don't match."
 msgstr "Salasanat eivät täsmää."
+
+#: ../forum/templates/index.html:21
+msgid "Board"
+msgstr "Alue"
+
+#: ../forum/templates/index.html:22
+msgid "Topics"
+msgstr "Aiheita"
+
+#: ../forum/templates/index.html:23
+msgid "Posts"
+msgstr "Viestejä"

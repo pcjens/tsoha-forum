@@ -1,6 +1,6 @@
 """Database access and maintenance functionality."""
 
-from typing import Any, Optional, Callable, cast
+from typing import Any, Optional, Callable, cast, List
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask import Flask
@@ -11,13 +11,6 @@ class ForumDatabase:
 
     def __init__(self, database: Any) -> None:
         self.database = database
-
-    def first_row_value(self, sql: str) -> Any:
-        """Returns the first row returned by the given SQL query."""
-        result = self.database.session.execute(sql).fetchone()
-        if result is None:
-            return None
-        return result[0]
 
     def logged_in(self, user_id: Optional[int]) -> bool:
         """Returns true if the given user id is not None, and is an actual user's user id."""
@@ -64,10 +57,34 @@ class ForumDatabase:
             return int(user_id) # reassuring the type system that user_id is an int
         return None
 
-    def get_hello(self) -> str:
-        """Returns a friendly hello, which only works if the database works."""
-        version = self.first_row_value("select version from forum_schema_version")
-        return "Hi! My database schema version is {}.".format(version)
+    def get_boards(self) -> List[Any]:
+        """Returns a list of boards with the relevant information for index.html's listing."""
+
+        sql = "select board_id, title, description from boards"
+        results = self.database.session.execute(sql).fetchall()
+        boards = []
+        for result in results:
+            board_id, title, description = result
+            sql = "select count(*) from topics where parent_board_id = :board_id"
+            topics = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+            sql = ("select count(*) from posts "
+                   "join topics on parent_topic_id = topic_id "
+                   "where parent_board_id = :board_id")
+            posts = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+            boards.append((board_id, title, description, topics, posts))
+        return boards
+
+    def get_username(self, user_id: Optional[int]) -> Optional[str]:
+        """Returns the username of the user with the given id, or None if there is no
+        user with the id, or the id is None."""
+
+        if user_id is None:
+            return None
+        sql = "select username from users where user_id = :user_id"
+        result = self.database.session.execute(sql, { "user_id": user_id }).fetchone()
+        if result is None:
+            return None
+        return str(result[0])
 
 
 def run_migrations(app: Flask, sql_alchemy_db: Any) -> bool:

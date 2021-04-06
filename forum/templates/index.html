@@ -1,9 +1,39 @@
 {% extends "base.html" %}
+{% block head %}
+<style>
+  .board-container {
+      display: grid;
+      grid-template-columns: 1fr 100px 100px;
+      max-width: 800px;
+      margin: auto;
+  }
+  .board-container > * {
+      display: inline-block;
+      padding: 10px;
+  }
+  .board-topics, .board-posts {
+      text-align: center;
+  }
+</style>
+{% endblock %}
 {% block content %}
-<p>
-  {{ _("Welcome to the forum. A message from the database:") }}
-  <blockquote>
-    {{ message }}
-  </blockquote>
-</p>
+<div class="board-container">
+  <strong class="board-description">{{ _("Board") }}</strong>
+  <strong class="board-topics">{{ _("Topics") }}</strong>
+  <strong class="board-posts">{{ _("Posts") }}</strong>
+</div>
+{% for id, title, desc, topics, posts in boards %}
+<section class="board-container">
+  <div class="board-description">
+    <a href="/board/{{ id }}"><strong>{{ title }}</strong></a>
+    <p>{{ desc }}</p>
+  </div>
+  <div class="board-topics">
+    <p>{{ topics }}</p>
+  </div>
+  <div class="board-posts">
+    <p>{{ posts }}</p>
+  </div>
+</section>
+{% endfor %}
 {% endblock %}

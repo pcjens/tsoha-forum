@@ -18,7 +18,7 @@ list of concrete features to be filled out as the project develops:
 - [ ] Users can search for messages containing a word.
 - [ ] Administrators can add and remove boards.
 - [ ] Administrators can create secret boards, and specify which users
-      have access to it.
+      can access them.
 
 Technical features / highlights:
 

@@ -32,6 +32,12 @@
           padding: 5px;
       }
 
+      #logout-form {
+          display: block;
+          margin-bottom: 10px;
+          text-align: right;
+      }
+
       #skip-nav-link {
           display: block;
           position: absolute;
@@ -45,7 +51,6 @@
       .inline-form {
           display: inline-block;
           margin-left: 8px;
-          margin-right: 8px;
       }
 
       /* A class for elements (mostly brs) which improve usability
@@ -73,7 +78,7 @@
     </header>
 
     {% if logged_in_user is not none %}
-    <aside>
+    <aside id="logout-form">
       {{ _("Logged in as %(username)s.", username=logged_in_user) }}
       <form class="inline-form" action="/logout" method="POST">
         <!-- TODO(security): CSRF protection -->

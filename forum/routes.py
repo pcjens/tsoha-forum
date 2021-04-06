@@ -54,7 +54,7 @@ def setup(app: Flask, database: ForumDatabase) -> None:
             "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
             "current_path": request.path,
-            "logged_in_user": session.get("user_id")
+            "logged_in_user": session.get("username")
         })
         return template.render(variables)
 
@@ -81,7 +81,7 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     @app.route("/")
     @templated("index.html")
     def index() -> Any:
-        return { "message": database.get_hello() }
+        return { "boards": database.get_boards() }
 
     @app.route("/change_language", methods = ["POST"])
     def change_language() -> Response:
@@ -99,6 +99,7 @@ def setup(app: Flask, database: ForumDatabase) -> None:
         user_id = database.login(request.form["username"], request.form["password"])
         if user_id is not None and database.logged_in(user_id):
             session["user_id"] = user_id
+            session["username"] = database.get_username(user_id)
             return redirect(request.form["redirect_url"])
         return redirect_form_error("invalid_credentials")
 
@@ -111,5 +112,6 @@ def setup(app: Flask, database: ForumDatabase) -> None:
         if database.register(username, password):
             user_id = database.login(username, password)
             session["user_id"] = user_id
+            session["username"] = database.get_username(user_id)
             return redirect(request.form["redirect_url"])
         return redirect_form_error("username_taken")

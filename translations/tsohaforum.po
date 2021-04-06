@@ -2,25 +2,33 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../forum/templates/base.html:6 ../forum/templates/base.html:72
+#: ../forum/templates/base.html:6 ../forum/templates/base.html:77
 msgid "Forum"
 msgstr ""
 
-#: ../forum/templates/base.html:68
+#: ../forum/templates/base.html:73
 msgid "Change language"
 msgstr ""
 
-#: ../forum/templates/base.html:77
+#: ../forum/templates/base.html:82
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr ""
 
-#: ../forum/templates/base.html:81
+#: ../forum/templates/base.html:86
 msgid "Logout"
 msgstr ""
 
-#: ../forum/templates/index.html:4
-msgid "Welcome to the forum. A message from the database:"
+#: ../forum/templates/index.html:21
+msgid "Board"
+msgstr ""
+
+#: ../forum/templates/index.html:22
+msgid "Topics"
+msgstr ""
+
+#: ../forum/templates/index.html:23
+msgid "Posts"
 msgstr ""
 
 #: ../forum/templates/login.html:38 ../forum/templates/login.html:54
