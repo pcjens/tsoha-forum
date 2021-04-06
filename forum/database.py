@@ -1,6 +1,6 @@
 """Database access and maintenance functionality."""
 
-from typing import Any, Optional
+from typing import Any, Optional, Callable, cast
 from os import getenv
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask import Flask
@@ -55,11 +55,13 @@ class ForumDatabase:
             return None
 
         user_id, password_hash = result
-        if password_hash is not None and check_password_hash(password_hash, password):
+        if password_hash is None: # Locked account
+            return None
+        if cast(Callable[[str, str], bool], check_password_hash)(password_hash, password):
             sql = "update users set latest_login_time = 'now' where user_id = :user_id"
             self.database.session.execute(sql, { "user_id": user_id })
             self.database.session.commit()
-            return user_id
+            return int(user_id) # reassuring the type system that user_id is an int
         return None
 
     def get_hello(self) -> str:
