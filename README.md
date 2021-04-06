@@ -8,7 +8,7 @@ The core idea of this project is to create a forum along the lines of
 [phpBB](https://www.phpbb.com/community/), though smaller in scope. A
 list of concrete features to be filled out as the project develops:
 
-- [ ] Users can register, login, and logout.
+- [x] Users can register, login, and logout.
 - [ ] The front page has of a list of boards. Each board should
       display the amount of topics and messages, and the date of the
       latest message on the board.

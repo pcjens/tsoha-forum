@@ -97,7 +97,7 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     @app.route("/login", methods = ["POST"])
     def login() -> Response:
         user_id = database.login(request.form["username"], request.form["password"])
-        if user_id is not None and database.logged_in(str(user_id)):
+        if user_id is not None and database.logged_in(user_id):
             session["user_id"] = user_id
             return redirect(request.form["redirect_url"])
         return redirect_form_error("invalid_credentials")
