@@ -2,6 +2,7 @@
 
 from typing import Any, Optional, Callable, cast, List
 from os import getenv
+from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask import Flask
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -74,6 +75,46 @@ class ForumDatabase:
             boards.append((board_id, title, description, topics, posts))
         return boards
 
+    def get_topics(self, board_id: int) -> List[Any]:
+        """Returns a list of topics for the given board."""
+
+        sql = "select topic_id from topics where parent_board_id = :board_id"
+        results = self.database.session.execute(sql, { "board_id": board_id }).fetchall()
+        topics: List[Any] = []
+        for result in results:
+            topic_id = result[0]
+            sql = ("select title, author_user_id from posts "
+                   "where parent_topic_id = :topic_id "
+                   "order by creation_time asc limit 1")
+            result = self.database.session.execute(sql, { "topic_id": topic_id })
+            title, author_user_id = result.fetchone()
+            sql = ("select creation_time from posts "
+                   "where parent_topic_id = :topic_id "
+                   "order by creation_time desc limit 1")
+            result = self.database.session.execute(sql, { "topic_id": topic_id })
+            latest_post_time = result.fetchone()[0]
+            sql = "select username from users where user_id = :user_id"
+            author = self.database.session.execute(sql, { "user_id": author_user_id }).fetchone()[0]
+            sql = "select count(*) - 1 from posts where parent_topic_id = :topic_id"
+            replies = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
+            topics.append((topic_id, title, author, replies, latest_post_time))
+        topics.sort(key = lambda row: cast(datetime, row[4]), reverse = True)
+        return topics
+
+    def get_posts(self, topic_id: int) -> List[Any]:
+        """Returns a list of posts for the given topic."""
+
+        sql = ("select post_id, u.username, title, content, p.creation_time, edit_time "
+               "from posts as p join users as u on author_user_id = user_id "
+               "where parent_topic_id = :topic_id "
+               "order by p.creation_time asc")
+        results = self.database.session.execute(sql, { "topic_id": topic_id }).fetchall()
+        posts: List[Any] = []
+        for result in results:
+            post_id, username, title, content, creation_time, edit_time = result
+            posts.append((post_id, username, title, content, creation_time, edit_time))
+        return posts
+
     def get_username(self, user_id: Optional[int]) -> Optional[str]:
         """Returns the username of the user with the given id, or None if there is no
         user with the id, or the id is None."""
@@ -82,6 +123,18 @@ class ForumDatabase:
             return None
         sql = "select username from users where user_id = :user_id"
         result = self.database.session.execute(sql, { "user_id": user_id }).fetchone()
+        if result is None:
+            return None
+        return str(result[0])
+
+    def get_board_name(self, board_id: Optional[int]) -> Optional[str]:
+        """Returns the name of the board with the given id, or None if there is no
+        board with the id, or the id is None."""
+
+        if board_id is None:
+            return None
+        sql = "select title from boards where board_id = :board_id"
+        result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()
         if result is None:
             return None
         return str(result[0])

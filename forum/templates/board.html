@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+  .topic-table {
+      width: 100%;
+  }
+  .topic-table > thead td {
+      font-weight: bold;
+  }
+  .topic-container {
+      display: grid;
+      grid-template-columns: 1fr 100px;
+  }
+  .topic-container > * {
+      display: inline-block;
+      padding: 10px;
+  }
+  .topic-replies {
+      text-align: center;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<a href="/board/{{ board_id }}"><h3>{{ board_name }}</h3></a>
+<table class="topic-table">
+  <thead>
+    <tr class="topic-container">
+      <td class="topic-description">{{ _("Topic") }}</strong>
+      <td class="topic-replies">{{ _("Replies") }}</strong>
+    </tr>
+  </thead>
+  <tbody>
+    {% for id, title, author, replies, latest_post_time in topics %}
+    <tr class="topic-container">
+      <td class="topic-description">
+        <a href="/board/{{ board_id }}/topic/{{ id }}"><strong>{{ title }}</strong></a>
+        <aside>{{ _("Conversation started by %(author)s", author=author) }}</aside>
+      </td>
+      <td class="topic-replies">
+        <p>{{ replies }}</p>
+      </td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

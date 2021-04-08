@@ -21,6 +21,17 @@
           }
       }
 
+      body {
+          max-width: 800px;
+          margin: auto;
+      }
+      @media (max-width: 800px) {
+          body {
+              width: auto;
+              margin: 10px;
+          }
+      }
+
       @media (prefers-color-scheme: light) { .error { color: #A11; } }
       @media (prefers-color-scheme: dark) { .error { color: #E66; } }
 
@@ -33,9 +44,7 @@
       }
 
       #logout-form {
-          display: block;
-          margin-bottom: 10px;
-          text-align: right;
+          margin: 8px;
       }
 
       #skip-nav-link {
@@ -50,7 +59,6 @@
 
       .inline-form {
           display: inline-block;
-          margin-left: 8px;
       }
 
       /* A class for elements (mostly brs) which improve usability
@@ -74,7 +82,7 @@
     </form>
 
     <header>
-      <h1>{{ _("Forum") }}</h1>
+      <a href="/"><h1>{{ _("Forum") }}</h1></a>
     </header>
 
     {% if logged_in_user is not none %}

@@ -17,7 +17,7 @@ from flask import session, request, redirect, Flask
 from werkzeug import Response
 from forum.database import ForumDatabase
 
-def setup(app: Flask, database: ForumDatabase) -> None:
+def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R0914
     """Sets up Flask routes and the templating system.
 
     This is where the variables mentioned in the template files are set."""
@@ -83,6 +83,27 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     def index() -> Any:
         return { "boards": database.get_boards() }
 
+    @app.route("/board/<int:board_id>")
+    @templated("board.html")
+    def board(board_id: int) -> Any:
+        return {
+            "board_id": board_id,
+            "board_name": database.get_board_name(board_id),
+            "topics": database.get_topics(board_id)
+        }
+
+    @app.route("/board/<int:board_id>/topic/<int:topic_id>")
+    @templated("topic.html")
+    def topic(board_id: int, topic_id: int) -> Any:
+        posts = database.get_posts(topic_id)
+        return {
+            "board_id": board_id,
+            "board_name": database.get_board_name(board_id),
+            "topic_id": topic_id,
+            "topic_name": posts[0][2],
+            "posts": posts
+        }
+
     @app.route("/change_language", methods = ["POST"])
     def change_language() -> Response:
         session["lang"] = request.form["new_language"]
@@ -92,6 +113,7 @@ def setup(app: Flask, database: ForumDatabase) -> None:
     def logout() -> Response:
         if "user_id" in session:
             del session["user_id"]
+            del session["username"]
         return redirect(request.form["redirect_url"])
 
     @app.route("/login", methods = ["POST"])

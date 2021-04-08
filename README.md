@@ -9,9 +9,10 @@ The core idea of this project is to create a forum along the lines of
 list of concrete features to be filled out as the project develops:
 
 - [x] Users can register, login, and logout.
-- [ ] The front page has of a list of boards. Each board should
-      display the amount of topics and messages, and the date of the
-      latest message on the board.
+- [x] The front page has of a list of boards. Each board should
+      display the amount of topics and messages.
+- [ ] The board and topic listings should display the title and date
+      of the latest post on the board or topic.
 - [ ] Users can create new topics.
 - [ ] Users can post new messages in existing topics.
 - [ ] Users can modify their own topics and messages.
