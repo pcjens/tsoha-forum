@@ -58,7 +58,10 @@ Technical features / highlights:
 Additional fun features as time allows (I don't necessarily expect to
 do any of these, let alone all of them):
 
-- [ ] Optional Markdown in messages, and message preview.
+- [x] Optional Markdown in messages
+- [ ] Message preview.
+- [ ] Custom CSS for forms, to fix dark mode on systems without dark
+      versions of forms.
 - [ ] Polls attached to messages.
 - [ ] Users can upload avatars that will display next to their
       messages.
