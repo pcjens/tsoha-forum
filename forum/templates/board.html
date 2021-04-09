@@ -1,46 +1,74 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
-  .topic-table {
-      width: 100%;
-  }
-  .topic-table > thead td {
-      font-weight: bold;
-  }
-  .topic-container {
+  .topics {
       display: grid;
+      margin-top: 20px;
+      margin-bottom: 20px;
       grid-template-columns: 1fr 100px;
+      column-gap: 10px;
+      row-gap: 10px;
   }
-  .topic-container > * {
-      display: inline-block;
-      padding: 10px;
+  .topic-description {
+      grid-column: 1 / span 1;
   }
   .topic-replies {
+      grid-column: 2 / span 1;
       text-align: center;
+  }
+
+  .topic-creation-menu {
+      cursor: pointer;
+  }
+  .form-container {
+      margin: 10px;
+      display: grid;
+      width: 100%;
+      grid-template-columns: auto 1fr;
+      column-gap: 20px;
+      row-gap: 5px;
+  }
+  .form-label {
+      grid-column: 1 / span 1;
+  }
+  .form-input {
+      grid-column: 2 / span 1;
+  }
+  .form-submit {
+      grid-column: 2 / span 1;
+      width: auto;
+      margin: auto;
+      margin-left: 0px;
   }
 </style>
 {% endblock %}
 {% block content %}
 <a href="/board/{{ board_id }}"><h3>{{ board_name }}</h3></a>
-<table class="topic-table">
-  <thead>
-    <tr class="topic-container">
-      <td class="topic-description">{{ _("Topic") }}</strong>
-      <td class="topic-replies">{{ _("Replies") }}</strong>
-    </tr>
-  </thead>
-  <tbody>
-    {% for id, title, author, replies, latest_post_time in topics %}
-    <tr class="topic-container">
-      <td class="topic-description">
-        <a href="/board/{{ board_id }}/topic/{{ id }}"><strong>{{ title }}</strong></a>
-        <aside>{{ _("Conversation started by %(author)s", author=author) }}</aside>
-      </td>
-      <td class="topic-replies">
-        <p>{{ replies }}</p>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+
+<details class="topic-creation-menu">
+  <summary>{{ _("Create a new topic") }}</summary>
+  <form class="form-container" action="/board/{{ board_id }}/topic" method="POST">
+    <!-- TODO(security): CSRF protection -->
+    <label class="form-label" for="input-title">{{ _("Title") }}</label>
+    <input class="form-input" id="input-title" type="text" name="title" minlength=1 maxlength=50>
+    <br class="for-no-css">
+    <label class="form-label" for="input-content">{{ _("Message") }}</label>
+    <textarea class="form-input" id="input-content" name="content"></textarea>
+    <br class="for-no-css">
+    <input type="hidden" name="redirect_url" value="{{ current_path }}">
+    <button class="form-submit" type="submit">{{ _("Create") }}</button>
+  </form>
+</details>
+
+<div class="topics">
+  <strong class="topic-description">{{ _("Topic") }}</strong>
+  <strong class="topic-replies">{{ _("Replies") }}</strong>
+  {% for id, title, author, replies, latest_post_time in topics %}
+  <article class="topic-description">
+    <a href="/board/{{ board_id }}/topic/{{ id }}"><strong>{{ title }}</strong></a>
+    <aside>{{ _("Conversation started by %(author)s", author=author) }}</aside>
+  </article>
+  <aside class="topic-replies">{{ replies }}</aside>
+  {% endfor %}
+</div>
 {% endblock %}

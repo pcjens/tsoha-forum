@@ -6,6 +6,8 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask import Flask
 from werkzeug.security import generate_password_hash, check_password_hash
+import mistletoe # type: ignore
+import bleach
 
 class ForumDatabase:
     """Holder of database access, provider of persistent data."""
@@ -57,6 +59,51 @@ class ForumDatabase:
             self.database.session.commit()
             return int(user_id) # reassuring the type system that user_id is an int
         return None
+
+    def create_post(self, topic_id: int, user_id: int, title: str, content: str) -> Optional[int]:
+        """Creates a new topic in the given topic."""
+
+        sql = "select count(*) from topics where topic_id = :topic_id"
+        result = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
+        if result == 0:
+            return None
+
+        title = bleach.clean(title)
+        content = mistletoe.markdown(bleach.clean(content))
+        if len(title) == 0 or len(title) > 50:
+            return None
+
+        sql = ("insert into posts (parent_topic_id, author_user_id, title, content, creation_time) "
+               "values (:topic_id, :user_id, :title, :content, 'now')"
+               "returning post_id")
+        variables = {
+            "topic_id": topic_id,
+            "user_id": user_id,
+            "title": title,
+            "content": content
+        }
+        post_id: int = self.database.session.execute(sql, variables).fetchone()[0]
+        self.database.session.commit()
+        return post_id
+
+    def create_topic(self, board_id: int, user_id: int, title: str, content: str) -> Optional[int]:
+        """Creates a new topic on the board, with the initial post containing
+        the given title and content."""
+
+        if len(title) == 0 or len(title) > 50:
+            return None
+
+        sql = "select count(*) from boards where board_id = :board_id"
+        result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+        if result == 0:
+            return None
+
+        sql = ("insert into topics (parent_board_id, sticky) values (:board_id, FALSE)"
+               "returning topic_id")
+        topic_id: int = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+        self.database.session.commit()
+        self.create_post(topic_id, user_id, title, content)
+        return topic_id
 
     def get_boards(self) -> List[Any]:
         """Returns a list of boards with the relevant information for index.html's listing."""

@@ -2,32 +2,83 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../forum/templates/base.html:6 ../forum/templates/base.html:77
+#: ../forum/templates/base.html:6 ../forum/templates/base.html:86
 msgid "Forum"
 msgstr ""
 
-#: ../forum/templates/base.html:73
+#: ../forum/templates/base.html:82
 msgid "Change language"
 msgstr ""
 
-#: ../forum/templates/base.html:82
+#: ../forum/templates/base.html:91
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr ""
 
-#: ../forum/templates/base.html:86
+#: ../forum/templates/base.html:95
 msgid "Logout"
 msgstr ""
 
-#: ../forum/templates/index.html:21
+#: ../forum/templates/base.html:105
+msgid ""
+"Powered by tsoha-forum, a forum server written for the database course at "
+"the University of Helsinki, distributed under the GNU AGPLv3 license."
+msgstr ""
+
+#: ../forum/templates/board.html:49
+msgid "Create a new topic"
+msgstr ""
+
+#: ../forum/templates/board.html:52
+msgid "Title"
+msgstr ""
+
+#: ../forum/templates/board.html:55
+msgid "Message"
+msgstr ""
+
+#: ../forum/templates/board.html:59
+msgid "Create"
+msgstr ""
+
+#: ../forum/templates/board.html:64
+msgid "Topic"
+msgstr ""
+
+#: ../forum/templates/board.html:65
+msgid "Replies"
+msgstr ""
+
+#: ../forum/templates/board.html:69
+#, python-format
+msgid "Conversation started by %(author)s"
+msgstr ""
+
+#: ../forum/templates/error-404.html:3
+msgid "404 Not Found"
+msgstr ""
+
+#: ../forum/templates/error-404.html:4
+msgid "There's nothing here."
+msgstr ""
+
+#: ../forum/templates/error-500.html:3
+msgid "500 Internal Server Error"
+msgstr ""
+
+#: ../forum/templates/error-500.html:4
+msgid "An unexpected error was encountered while processing your request."
+msgstr ""
+
+#: ../forum/templates/index.html:27
 msgid "Board"
 msgstr ""
 
-#: ../forum/templates/index.html:22
+#: ../forum/templates/index.html:28
 msgid "Topics"
 msgstr ""
 
-#: ../forum/templates/index.html:23
+#: ../forum/templates/index.html:29
 msgid "Posts"
 msgstr ""
 

@@ -26,13 +26,14 @@ list of concrete features to be filled out as the project develops:
       display the amount of topics and messages.
 - [ ] The board and topic listings should display the title and date
       of the latest post on the board or topic.
-- [ ] Users can create new topics.
+- [x] Users can create new topics.
 - [ ] Users can post new messages in existing topics.
 - [ ] Users can modify their own topics and messages.
 - [ ] Users can search for messages containing a word.
 - [ ] Administrators can add and remove boards.
 - [ ] Administrators can create secret boards, and specify which users
       can access them.
+- [ ] Forms are protected from CSRF attacks.
 
 Technical features / highlights:
 
@@ -50,6 +51,8 @@ Technical features / highlights:
       obvious, pylint-recognized issues. This is implemented in the
       [static-analysis](https://github.com/pcjens/tsoha-forum/actions/workflows/static-analysis.yml)
       workflow, using pylint (general lints) and mypy (typechecking).
+- [ ] A strict Content-Security-Policy as a last-ditch effort against
+      XSS and similar security issues.
 
 Additional fun features as time allows (I don't necessarily expect to
 do any of these, let alone all of them):

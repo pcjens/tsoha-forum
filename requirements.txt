@@ -1,4 +1,5 @@
 astroid==2.5.1
+bleach==3.3.0
 click==7.1.2
 Flask==1.1.2
 Flask-SQLAlchemy==2.5.1
@@ -10,14 +11,19 @@ Jinja2==2.11.3
 lazy-object-proxy==1.6.0
 MarkupSafe==1.1.1
 mccabe==0.6.1
+mistletoe==0.7.2
 mypy==0.812
 mypy-extensions==0.4.3
+packaging==20.9
 psycopg2-binary==2.8.6
 pylint==2.7.2
+pyparsing==2.4.7
 python-dotenv==0.15.0
+six==1.15.0
 SQLAlchemy==1.4.2
 toml==0.10.2
 typed-ast==1.4.2
 typing-extensions==3.7.4.3
+webencodings==0.5.1
 Werkzeug==1.0.1
 wrapt==1.12.1

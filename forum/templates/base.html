@@ -43,10 +43,6 @@
           padding: 5px;
       }
 
-      #logout-form {
-          margin: 8px;
-      }
-
       #skip-nav-link {
           display: block;
           position: absolute;
@@ -56,6 +52,11 @@
           text-align: center;
       }
       #skip-nav-link:not(:focus) { opacity: 0; }
+
+      #content {
+          margin-top: 30px;
+          margin-bottom: 30px;
+      }
 
       .inline-form {
           display: inline-block;
@@ -96,8 +97,13 @@
     </aside>
     {% endif %}
 
-    <article id="content">
+    <main id="content">
       {% block content %}{% endblock %}
-    </article>
+    </main>
+
+    <footer>
+      {{ _("Powered by tsoha-forum, a forum server written for the database course at the University of Helsinki, distributed under the GNU AGPLv3 license.") }}
+      <a href="https://github.com/pcjens/tsoha-forum">GitHub/tsoha-forum</a>
+    </footer>
   </body>
 </html>

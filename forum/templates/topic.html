@@ -1,6 +1,15 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
+  h4 {
+      margin: 0;
+  }
+  .post-container {
+      border-left: 1px solid;
+      padding-left: 10px;
+      margin-top: 20px;
+      margin-bottom: 20px;
+  }
 </style>
 {% endblock %}
 {% block content %}
@@ -9,7 +18,7 @@
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}">{{ topic_name }}</a>
 </h3>
 {% for id, author, title, content, creation_time, edit_time in posts %}
-<article id="{{ id }}">
+<article id="{{ id }}" class="post-container">
   <h4>{{ author }}: {{ title }}</h4>
   {% if edit_time is not none %}
   <aside>Edited at <time>{{ edit_time }}</time></aside>
@@ -18,7 +27,7 @@
     {{ content }}
   </p>
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}#{{ id }}" title="Link to post">
-    <time>{{ creation_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
+    <time datetime="{{ creation_time }}">{{ creation_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
   </a>
 </article>
 {% endfor %}

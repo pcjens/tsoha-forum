@@ -25,7 +25,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     def make_jinja_env(lang: str, use_null_translations: bool) -> Any:
         jinja_env: Any = Environment(
             loader = PackageLoader("forum", "templates"),
-            autoescape = select_autoescape(["html"]),
+            autoescape = select_autoescape([]), # No autoescape, for rendering html in user posts.
             extensions = ["jinja2.ext.i18n"]
         )
         jinja_env.policies["ext.i18n.trimmed"] = True
@@ -58,16 +58,27 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         })
         return template.render(variables)
 
-    def templated(template_path: str, login_required: bool = True) -> Callable[..., Any]:
+    def login_required(route: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(route)
+        def decorated_function(*args: Any, **kwargs: Any) -> Any:
+            if not database.logged_in(session.get("user_id")):
+                login_params = {}
+                if "error" in request.args:
+                    login_params["error"] = request.args["error"]
+                return fill_and_render_template("login.html", login_params), 403
+            return route(*args, **kwargs)
+        return decorated_function
+
+    def templated(template_path: str) -> Callable[..., Any]:
         def decorator(route: Callable[..., Dict[str, Any]]) -> Callable[..., Any]:
             @wraps(route)
             def decorated_function(*args: Any, **kwargs: Any) -> Any:
-                if login_required and not database.logged_in(session.get("user_id")):
-                    login_params = {}
-                    if "error" in request.args:
-                        login_params["error"] = request.args["error"]
-                    return fill_and_render_template("login.html", login_params)
-                return fill_and_render_template(template_path, route(*args, **kwargs))
+                variables = route(*args, **kwargs)
+                if "error_code" in variables:
+                    code = variables["error_code"]
+                    template = "error-{}.html".format(code)
+                    return fill_and_render_template(template, variables), variables["error_code"]
+                return fill_and_render_template(template_path, variables)
             return decorated_function
         return decorator
 
@@ -78,24 +89,42 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             return redirect(base_url + "&" + param)
         return redirect(base_url + "?" + param)
 
+    @app.errorhandler(404)
+    @templated("")
+    def page_not_found(error: Any) -> Dict[str, int]:
+        return { "error_code": 404 }
+
+    @app.errorhandler(500)
+    @templated("")
+    def internal_server_error(error: Any) -> Dict[str, int]:
+        return { "error_code": 500 }
+
     @app.route("/")
+    @login_required
     @templated("index.html")
     def index() -> Any:
         return { "boards": database.get_boards() }
 
     @app.route("/board/<int:board_id>")
+    @login_required
     @templated("board.html")
     def board(board_id: int) -> Any:
+        board_name = database.get_board_name(board_id)
+        if board_name is None:
+            return { "error_code": 404 }
         return {
             "board_id": board_id,
-            "board_name": database.get_board_name(board_id),
+            "board_name": board_name,
             "topics": database.get_topics(board_id)
         }
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>")
+    @login_required
     @templated("topic.html")
     def topic(board_id: int, topic_id: int) -> Any:
         posts = database.get_posts(topic_id)
+        if posts is None or len(posts) == 0:
+            return { "error_code": 404 }
         return {
             "board_id": board_id,
             "board_name": database.get_board_name(board_id),
@@ -110,6 +139,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         return redirect(request.form["redirect_url"])
 
     @app.route("/logout", methods = ["POST"])
+    @login_required
     def logout() -> Response:
         if "user_id" in session:
             del session["user_id"]
@@ -137,3 +167,11 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             session["username"] = database.get_username(user_id)
             return redirect(request.form["redirect_url"])
         return redirect_form_error("username_taken")
+
+    @app.route("/board/<int:board_id>/topic", methods = ["POST"])
+    @login_required
+    def new_board(board_id: int) -> Any:
+        title = request.form["title"]
+        content = request.form["content"]
+        topic_id = database.create_topic(board_id, session["user_id"], title, content)
+        return redirect("/board/{}/topic/{}".format(board_id, topic_id))

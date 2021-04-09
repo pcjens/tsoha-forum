@@ -1,49 +1,39 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
-  .board-table {
-      width: 100%;
-  }
-  .board-table > thead td {
-      font-weight: bold;
-  }
-  .board-container {
+  .boards {
       display: grid;
+      margin-top: 20px;
+      margin-bottom: 20px;
       grid-template-columns: 1fr 100px 100px;
+      column-gap: 10px;
+      row-gap: 10px;
   }
-  .board-container > * {
-      display: inline-block;
-      padding: 10px;
+  .board-description {
+      grid-column: 1 / span 1;
   }
-  .board-topics, .board-posts {
+  .board-topics {
+      grid-column: 2 / span 1;
+      text-align: center;
+  }
+  .board-posts {
+      grid-column: 3 / span 1;
       text-align: center;
   }
 </style>
 {% endblock %}
 {% block content %}
-<table class="board-table">
-  <thead>
-    <tr class="board-container">
-      <td class="board-description">{{ _("Board") }}</strong>
-      <td class="board-topics">{{ _("Topics") }}</strong>
-      <td class="board-posts">{{ _("Posts") }}</strong>
-    </tr>
-  </thead>
-  <tbody>
-    {% for id, title, desc, topics, posts in boards %}
-    <tr class="board-container">
-      <td class="board-description">
-        <a href="/board/{{ id }}"><strong>{{ title }}</strong></a>
-        <p>{{ desc }}</p>
-      </td>
-      <td class="board-topics">
-        <p>{{ topics }}</p>
-      </td>
-      <td class="board-posts">
-        <p>{{ posts }}</p>
-      </td>
-    </tr>
-    {% endfor %}
-  </tbody>
-</table>
+<div class="boards">
+  <strong class="board-description">{{ _("Board") }}</strong>
+  <strong class="board-topics">{{ _("Topics") }}</strong>
+  <strong class="board-posts">{{ _("Posts") }}</strong>
+  {% for id, title, desc, topics, posts in boards %}
+  <article class="board-description">
+    <a href="/board/{{ id }}"><strong>{{ title }}</strong></a>
+    <aside>{{ desc }}</aside>
+  </article>
+  <aside class="board-topics">{{ topics }}</aside>
+  <aside class="board-posts">{{ posts }}</aside>
+  {% endfor %}
+</div>
 {% endblock %}
