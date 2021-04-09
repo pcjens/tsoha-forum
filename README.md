@@ -1,6 +1,19 @@
 # tsoha-forum
+
+[![static-analysis](https://github.com/pcjens/tsoha-forum/actions/workflows/static-analysis.yml/badge.svg?branch=main)](https://github.com/pcjens/tsoha-forum/actions/workflows/static-analysis.yml)
+
 Written for the database project course (abbreviated *tsoha*) at the
 University of Helsinki.
+
+## Usage and testing
+
+1. Register an account at: https://tsoha-pcjens-forum.herokuapp.com/
+2. You can:
+   - Read messages and topics posted on the boards. (Not yet released)
+   - Start a new topic on one of the boards. (Not yet implemented)
+   - Post replies to the topics. (Not yet implemented)
+   - Edit your topics and replies. (Not yet implemented)
+   - Search for posts. (Not yet implemented)
 
 ## Features
 
