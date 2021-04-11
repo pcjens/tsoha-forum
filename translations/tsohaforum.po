@@ -2,54 +2,54 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../forum/templates/base.html:6 ../forum/templates/base.html:86
+#: ../forum/templates/base.html:6 ../forum/templates/base.html:105
 msgid "Forum"
 msgstr ""
 
-#: ../forum/templates/base.html:82
+#: ../forum/templates/base.html:101
 msgid "Change language"
 msgstr ""
 
-#: ../forum/templates/base.html:91
+#: ../forum/templates/base.html:110
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr ""
 
-#: ../forum/templates/base.html:95
+#: ../forum/templates/base.html:114
 msgid "Logout"
 msgstr ""
 
-#: ../forum/templates/base.html:105
+#: ../forum/templates/base.html:124
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
 msgstr ""
 
-#: ../forum/templates/board.html:49
+#: ../forum/templates/board.html:51
 msgid "Create a new topic"
 msgstr ""
 
-#: ../forum/templates/board.html:52
+#: ../forum/templates/board.html:54 ../forum/templates/topic.html:96
 msgid "Title"
 msgstr ""
 
-#: ../forum/templates/board.html:55
+#: ../forum/templates/board.html:57 ../forum/templates/topic.html:99
 msgid "Message"
 msgstr ""
 
-#: ../forum/templates/board.html:59
+#: ../forum/templates/board.html:61
 msgid "Create"
 msgstr ""
 
-#: ../forum/templates/board.html:64
+#: ../forum/templates/board.html:66
 msgid "Topic"
 msgstr ""
 
-#: ../forum/templates/board.html:65
+#: ../forum/templates/board.html:67
 msgid "Replies"
 msgstr ""
 
-#: ../forum/templates/board.html:69
+#: ../forum/templates/board.html:71
 #, python-format
 msgid "Conversation started by %(author)s"
 msgstr ""
@@ -117,4 +117,16 @@ msgstr ""
 
 #: ../forum/templates/login.html:76
 msgid "Confirm password"
+msgstr ""
+
+#: ../forum/templates/topic.html:87
+msgid "Delete"
+msgstr ""
+
+#: ../forum/templates/topic.html:94
+msgid "Reply to this topic"
+msgstr ""
+
+#: ../forum/templates/topic.html:103
+msgid "Reply"
 msgstr ""
