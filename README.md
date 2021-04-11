@@ -12,7 +12,7 @@ Register an account at: https://tsoha-pcjens-forum.herokuapp.com/
 Once logged in, you can:
 - Read messages and topics posted on the boards.
 - Start a new topic on one of the boards.
-- Post replies to the topics. (Not yet implemented)
+- Post replies to the topics.
 - Edit your topics and replies. (Not yet implemented)
 - Search for posts. (Not yet implemented)
 
@@ -28,13 +28,12 @@ list of concrete features to be filled out as the project develops:
 - [ ] The board and topic listings should display the title and date
       of the latest post on the board or topic.
 - [x] Users can create new topics.
-- [ ] Users can post new messages in existing topics.
+- [x] Users can post new messages in existing topics.
 - [ ] Users can modify their own topics and messages.
 - [ ] Users can search for messages containing a word.
 - [ ] Administrators can add and remove boards.
 - [ ] Administrators can create secret boards, and specify which users
       can access them.
-- [ ] Forms are protected from CSRF attacks.
 
 Technical features / highlights:
 
@@ -52,6 +51,8 @@ Technical features / highlights:
       obvious, pylint-recognized issues. This is implemented in the
       [static-analysis](https://github.com/pcjens/tsoha-forum/actions/workflows/static-analysis.yml)
       workflow, using pylint (general lints) and mypy (typechecking).
+- [x] User input is sanitized to avoid XSS attacks.
+- [ ] Forms are protected from CSRF attacks.
 - [ ] A strict Content-Security-Policy as a last-ditch effort against
       XSS and similar security issues.
 

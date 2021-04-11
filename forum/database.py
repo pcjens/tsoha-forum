@@ -75,7 +75,7 @@ class ForumDatabase:
         content = bleach.clean(content).replace("&gt;", ">")
         markdown_source = Document(content)
         content = self.markdown_renderer.render(markdown_source)
-        if len(title) == 0 or len(title) > 50:
+        if len(title) == 0:
             return None
 
         sql = ("insert into posts (parent_topic_id, author_user_id, title, content, creation_time) "
@@ -95,7 +95,7 @@ class ForumDatabase:
         """Creates a new topic on the board, with the initial post containing
         the given title and content."""
 
-        if len(title) == 0 or len(title) > 50:
+        if len(title) == 0:
             return None
 
         sql = "select count(*) from boards where board_id = :board_id"

@@ -1,8 +1,9 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
+  /* Post styling */
   h4 {
-      margin: 0;
+      margin: 0px;
   }
   .post-container {
       padding: 10px;
@@ -22,6 +23,43 @@
   }
   .post-content blockquote > *::before {
       content: "> ";
+  }
+
+  .post-container:target {
+      outline: 3px dotted #88F;
+  }
+  @media (prefers-color-scheme: dark) {
+      .post-container:target {
+          outline: 3px dotted #55A;
+      }
+  }
+
+  /* Reply form styling */
+  .topic-creation-menu {
+      cursor: pointer;
+  }
+  .form-container {
+      margin: 10px;
+      display: grid;
+      width: 100%;
+      grid-template-columns: auto 1fr;
+      column-gap: 20px;
+      row-gap: 5px;
+  }
+  .form-label {
+      grid-column: 1 / span 1;
+  }
+  .form-input {
+      grid-column: 2 / span 1;
+  }
+  .form-submit {
+      grid-column: 2 / span 1;
+      width: auto;
+      margin: auto;
+      margin-left: 0px;
+  }
+  .form-header {
+      grid-column: 1 / span 2;
   }
 </style>
 {% endblock %}
@@ -44,4 +82,17 @@
   </a>
 </article>
 {% endfor %}
+
+<form class="form-container" action="/board/{{ board_id }}/topic/{{ topic_id }}" method="POST">
+  <h4 class="form-header">{{ _("Reply to this topic") }}</h4>
+  <!-- TODO(security): CSRF protection -->
+  <label class="form-label" for="input-title">{{ _("Title") }}</label>
+  <input class="form-input" id="input-title" type="text" name="title" value="Re: {{ topic_name }}" minlength=1 maxlength=53>
+  <br class="for-no-css">
+  <label class="form-label" for="input-content">{{ _("Message") }}</label>
+  <textarea class="form-input" id="input-content" name="content"></textarea>
+  <br class="for-no-css">
+  <input type="hidden" name="redirect_url" value="{{ current_path }}">
+  <button class="form-submit" type="submit">{{ _("Reply") }}</button>
+</form>
 {% endblock %}

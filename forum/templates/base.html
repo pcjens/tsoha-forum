@@ -8,16 +8,23 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
     <style>
       html { font-family: "Inter", system-ui; }
-      @media (prefers-color-scheme: light) {
-          html {
-              background-color: #FFFFFD;
-              color: #444;
-          }
-          blockquote { color: #666; }
-          a { color: #22D; }
-          a:visited { color: #71F; }
-          a:active { color: #C00; }
+
+      /* A hack to make it so everything doesn't shift when the scrollbar
+         appears/disappears when moving between pages. */
+      html { margin-left: calc(100vw - 100%); }
+      /* The hack isn't needed when the max-width can't be reached. */
+      @media (max-width: 800px) {
+          html { margin-left: 0; }
       }
+
+      html {
+          background-color: #FFFFFD;
+          color: #444;
+      }
+      blockquote { color: #666; }
+      a { color: #22D; }
+      a:visited { color: #71F; }
+      a:active { color: #C00; }
       @media (prefers-color-scheme: dark) {
           html {
               background-color: #222;

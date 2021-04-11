@@ -17,7 +17,7 @@ from flask import session, request, redirect, Flask
 from werkzeug import Response
 from forum.database import ForumDatabase
 
-def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R0914
+def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R0914, R0915
     """Sets up Flask routes and the templating system.
 
     This is where the variables mentioned in the template files are set."""
@@ -168,10 +168,22 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             return redirect(request.form["redirect_url"])
         return redirect_form_error("username_taken")
 
-    @app.route("/board/<int:board_id>/topic", methods = ["POST"])
+    @app.route("/board/<int:board_id>", methods = ["POST"])
     @login_required
-    def new_board(board_id: int) -> Any:
+    def new_topic(board_id: int) -> Any:
         title = request.form["title"]
         content = request.form["content"]
         topic_id = database.create_topic(board_id, session["user_id"], title, content)
+        if topic_id is None:
+            return redirect(request.form["redirect_uri"])
         return redirect("/board/{}/topic/{}".format(board_id, topic_id))
+
+    @app.route("/board/<int:board_id>/topic/<int:topic_id>", methods = ["POST"])
+    @login_required
+    def new_post(board_id: int, topic_id: int) -> Any:
+        title = request.form["title"]
+        content = request.form["content"]
+        post_id = database.create_post(topic_id, session["user_id"], title, content)
+        if post_id is None:
+            return redirect(request.form["redirect_uri"])
+        return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
