@@ -6,7 +6,7 @@ from datetime import datetime
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask import Flask
 from werkzeug.security import generate_password_hash, check_password_hash
-import mistletoe # type: ignore
+from mistletoe import HTMLRenderer, Document # type: ignore
 import bleach
 
 class ForumDatabase:
@@ -14,6 +14,7 @@ class ForumDatabase:
 
     def __init__(self, database: Any) -> None:
         self.database = database
+        self.markdown_renderer = HTMLRenderer()
 
     def logged_in(self, user_id: Optional[int]) -> bool:
         """Returns true if the given user id is not None, and is an actual user's user id."""
@@ -69,7 +70,11 @@ class ForumDatabase:
             return None
 
         title = bleach.clean(title)
-        content = mistletoe.markdown(bleach.clean(content))
+        # Sanitize any html aside from '>' signs, because they have a
+        # use in Markdown.
+        content = bleach.clean(content).replace("&gt;", ">")
+        markdown_source = Document(content)
+        content = self.markdown_renderer.render(markdown_source)
         if len(title) == 0 or len(title) > 50:
             return None
 
@@ -133,8 +138,13 @@ class ForumDatabase:
             sql = ("select title, author_user_id from posts "
                    "where parent_topic_id = :topic_id "
                    "order by creation_time asc limit 1")
-            result = self.database.session.execute(sql, { "topic_id": topic_id })
-            title, author_user_id = result.fetchone()
+            result = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()
+            if result is None:
+                # A topic without posts: this happens if the server
+                # manages to run into issues between creating the
+                # topic and first post.
+                continue
+            title, author_user_id = result
             sql = ("select creation_time from posts "
                    "where parent_topic_id = :topic_id "
                    "order by creation_time desc limit 1")

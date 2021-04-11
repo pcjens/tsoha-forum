@@ -58,7 +58,7 @@ Technical features / highlights:
 Additional fun features as time allows (I don't necessarily expect to
 do any of these, let alone all of them):
 
-- [x] Optional Markdown in messages
+- [x] Optional Markdown in messages.
 - [ ] Message preview.
 - [ ] Custom CSS for forms, to fix dark mode on systems without dark
       versions of forms.

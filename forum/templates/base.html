@@ -13,12 +13,20 @@
               background-color: #FFFFFD;
               color: #444;
           }
+          blockquote { color: #666; }
+          a { color: #22D; }
+          a:visited { color: #71F; }
+          a:active { color: #C00; }
       }
       @media (prefers-color-scheme: dark) {
           html {
               background-color: #222;
               color: #AAA;
           }
+          blockquote { color: #999; }
+          a { color: #88F; }
+          a:visited { color: #87E; }
+          a:active { color: #C55; }
       }
 
       body {
@@ -60,6 +68,10 @@
 
       .inline-form {
           display: inline-block;
+      }
+
+      footer {
+          margin-bottom: 20px;
       }
 
       /* A class for elements (mostly brs) which improve usability
