@@ -24,7 +24,11 @@
   .post-content blockquote > *::before {
       content: "> ";
   }
+  .delete-form {
+      margin-top: 4px;
+  }
 
+  /* Reply form styling */
   .post-container:target {
       outline: 3px dotted #88F;
   }
@@ -33,8 +37,6 @@
           outline: 3px dotted #55A;
       }
   }
-
-  /* Reply form styling */
   .topic-creation-menu {
       cursor: pointer;
   }
@@ -68,7 +70,7 @@
   <a href="/board/{{ board_id }}">{{ board_name }}</a>:
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}">{{ topic_name }}</a>
 </h3>
-{% for id, author, title, content, creation_time, edit_time in posts %}
+{% for id, author, title, content, creation_time, edit_time, owned in posts %}
 <article id="{{ id }}" class="post-container">
   <h4>{{ author }}: {{ title }}</h4>
   {% if edit_time is not none %}
@@ -80,6 +82,11 @@
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}#{{ id }}" title="Link to post">
     <time datetime="{{ creation_time }}">{{ creation_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
   </a>
+  {% if owned %}
+  <form class="delete-form" action="/board/{{ board_id }}/topic/{{ topic_id }}/delete/{{ id }}" method="POST">
+    <button type="submit">{{ _("Delete") }}</button>
+  </form>
+  {% endif %}
 </article>
 {% endfor %}
 

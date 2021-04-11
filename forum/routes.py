@@ -122,8 +122,8 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @login_required
     @templated("topic.html")
     def topic(board_id: int, topic_id: int) -> Any:
-        posts = database.get_posts(topic_id)
-        if posts is None or len(posts) == 0:
+        posts = database.get_posts(topic_id, session["user_id"])
+        if len(posts) == 0:
             return { "error_code": 404 }
         return {
             "board_id": board_id,
@@ -187,3 +187,13 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         if post_id is None:
             return redirect(request.form["redirect_uri"])
         return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
+
+    @app.route("/board/<int:board_id>/topic/<int:topic_id>/delete/<int:post_id>",
+               methods = ["POST"])
+    @login_required
+    def delete_post(board_id: int, topic_id: int, post_id: int) -> Any:
+        database.delete_post(post_id, session["user_id"])
+        posts_after = database.get_posts(topic_id, session["user_id"])
+        if len(posts_after) > 0:
+            return redirect("/board/{}/topic/{}".format(board_id, topic_id))
+        return redirect("/board/{}".format(board_id))

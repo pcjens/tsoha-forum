@@ -61,6 +61,13 @@ class ForumDatabase:
             return int(user_id) # reassuring the type system that user_id is an int
         return None
 
+    def delete_post(self, post_id: int, user_id: int) -> None:
+        """Deletes the post if the user owns it."""
+
+        sql = "delete from posts where author_user_id = :user_id and post_id = :post_id"
+        self.database.session.execute(sql, { "user_id": user_id, "post_id": post_id })
+        self.database.session.commit()
+
     def create_post(self, topic_id: int, user_id: int, title: str, content: str) -> Optional[int]:
         """Creates a new topic in the given topic."""
 
@@ -158,18 +165,20 @@ class ForumDatabase:
         topics.sort(key = lambda row: cast(datetime, row[4]), reverse = True)
         return topics
 
-    def get_posts(self, topic_id: int) -> List[Any]:
+    def get_posts(self, topic_id: int, user_id: int) -> List[Any]:
         """Returns a list of posts for the given topic."""
 
-        sql = ("select post_id, u.username, title, content, p.creation_time, edit_time "
+        sql = ("select post_id, u.username, title, content, "
+               "p.creation_time, edit_time, p.author_user_id "
                "from posts as p join users as u on author_user_id = user_id "
                "where parent_topic_id = :topic_id "
                "order by p.creation_time asc")
         results = self.database.session.execute(sql, { "topic_id": topic_id }).fetchall()
         posts: List[Any] = []
         for result in results:
-            post_id, username, title, content, creation_time, edit_time = result
-            posts.append((post_id, username, title, content, creation_time, edit_time))
+            post_id, username, title, content, creation_time, edit_time, author_user_id = result
+            owned = author_user_id == user_id
+            posts.append((post_id, username, title, content, creation_time, edit_time, owned))
         return posts
 
     def get_username(self, user_id: Optional[int]) -> Optional[str]:
