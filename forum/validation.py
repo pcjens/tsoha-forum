@@ -32,3 +32,11 @@ def is_valid_title(title: str) -> bool:
         max_length = 54
     return len(title) > 1 and len(title) <= max_length and \
         not title[0].isspace() and not title[-1].isspace()
+
+def is_valid_post_content(content: str) -> bool:
+    """Returns True if the content is allowed."""
+
+    min_length = 10
+    max_length = 100000
+    return len(content) >= min_length and len(content) <= max_length and \
+        not content[0].isspace() and not content[-1].isspace()

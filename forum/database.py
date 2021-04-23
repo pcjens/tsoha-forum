@@ -8,7 +8,7 @@ from flask import Flask
 from werkzeug.security import generate_password_hash, check_password_hash
 from mistletoe import HTMLRenderer, Document # type: ignore
 import bleach
-from forum.validation import is_valid_title
+from forum.validation import is_valid_title, is_valid_post_content
 
 class ForumDatabase:
     """Holder of database access, provider of persistent data."""
@@ -87,14 +87,14 @@ class ForumDatabase:
         title = bleach.clean(title.strip())
         # Sanitize any html aside from '>' signs, because they have a
         # use in Markdown.
-        content = bleach.clean(content).replace("&gt;", ">")
+        content = bleach.clean(content.strip()).replace("&gt;", ">")
         markdown_source = Document(content)
-        content = self.markdown_renderer.render(markdown_source)
-        if not is_valid_title(title):
+        content = self.markdown_renderer.render(markdown_source).strip()
+        if not is_valid_title(title) or not is_valid_post_content(content):
             return None
 
         sql = ("insert into posts (parent_topic_id, author_user_id, title, content, creation_time) "
-               "values (:topic_id, :user_id, :title, :content, 'now')"
+               "values (:topic_id, :user_id, :title, :content, 'now') "
                "returning post_id")
         variables = {
             "topic_id": topic_id,
@@ -115,7 +115,7 @@ class ForumDatabase:
         if result == 0:
             return None
 
-        sql = ("insert into topics (parent_board_id, sticky) values (:board_id, FALSE)"
+        sql = ("insert into topics (parent_board_id, sticky) values (:board_id, FALSE) "
                "returning topic_id")
         topic_id: int = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
         # Don't commit yet, as create_post may fail.
