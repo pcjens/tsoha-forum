@@ -23,11 +23,11 @@ msgstr "Logged in as %(username)s."
 msgid "Logout"
 msgstr "Logout"
 
-#: ../forum/templates/base.html:148
+#: ../forum/templates/base.html:148 ../forum/templates/base.html:149
 msgid "Search"
 msgstr "Search"
 
-#: ../forum/templates/base.html:158
+#: ../forum/templates/base.html:158 ../forum/templates/base.html:159
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
@@ -164,3 +164,7 @@ msgstr "Reply to this topic"
 #: ../forum/templates/topic.html:86
 msgid "Reply"
 msgstr "Reply"
+
+#: ../forum/templates/base.html:147
+msgid "Search for posts"
+msgstr ""

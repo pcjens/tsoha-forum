@@ -94,7 +94,7 @@ msgid "Posts"
 msgstr "Viestejä"
 
 #: ../forum/templates/base.html:105 ../forum/templates/base.html:124
-#: ../forum/templates/base.html:158
+#: ../forum/templates/base.html:158 ../forum/templates/base.html:159
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
@@ -170,21 +170,21 @@ msgstr "Vastaa tähän keskusteluun"
 msgid "Reply"
 msgstr "Vastaa"
 
-#: ../forum/templates/base.html:148
+#: ../forum/templates/base.html:148 ../forum/templates/base.html:149
 msgid "Search"
-msgstr ""
+msgstr "Hae"
 
 #: ../forum/templates/board.html:77 ../forum/templates/index.html:43
 msgid "Latest post"
-msgstr ""
+msgstr "Uusin viesti"
 
 #: ../forum/templates/login.html:48
 msgid ""
 "Invalid username. Usernames must not start or end with spaces, and must not "
 "be empty."
 msgstr ""
-"Käyttäjänimet eivät saa alkaa tai loppua välilyönneillä, ja niiden on "
-"oltava 1-20 merkkiä pitkiä"
+"Käyttäjänimet eivät saa alkaa tai loppua välilyönneillä, ja niiden on oltava "
+"1-20 merkkiä pitkiä"
 
 #: ../forum/templates/login.html:50
 msgid ""
@@ -201,3 +201,7 @@ msgstr "Kyllä, haluan poistaa tämän viestin."
 #: ../forum/routes.py:219
 msgid "postgres-search-dictionary"
 msgstr "finnish"
+
+#: ../forum/templates/base.html:147
+msgid "Search for posts"
+msgstr "Hae viesteistä"

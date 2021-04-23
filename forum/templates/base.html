@@ -144,7 +144,8 @@
       </form>
 
       <form action="/search" method="GET">
-        <input id="search" type="search" name="q" placeholder="{{ _("Search for posts") }}">
+        {% set searchstring %}{{ _("Search for posts") }}{% endset %}
+        <input id="search" type="search" name="q" placeholder="{{ searchstring }}" value="{{ query_string }}">
         <button type="submit">{{ _("Search") }}</button>
       </form>
       {% endif %}

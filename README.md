@@ -31,7 +31,10 @@ list of concrete features to be filled out as the project develops:
 - [x] Users can create new topics.
 - [x] Users can post new messages in existing topics.
 - [ ] Users can modify their own topics and messages.
-- [ ] Users can search for messages containing a word.
+- [x] Users can search for messages powered by [PostgreSQL's full text
+      search](https://www.postgresql.org/docs/9.5/textsearch.html).
+  - The search uses the correct dictionary for the user's language,
+    improving search results for non-English forums.
 - [ ] Administrators can add and remove boards.
 - [ ] Administrators can create secret boards, and specify which users
       can access them.
