@@ -17,7 +17,8 @@ COMMON_PASSWORDS = load_common_passwords()
 
 def is_valid_username(username: str) -> bool:
     """Returns True if the username is allowed."""
-    return len(username) > 1 and not username[0].isspace() and not username[-1].isspace()
+    return len(username) > 1 and len(username) <= 20 and \
+        not username[0].isspace() and not username[-1].isspace()
 
 def is_valid_password(password: str) -> bool:
     """Returns True if the password is allowed."""

@@ -5,18 +5,31 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ _("Forum") }}</title>
     <link rel="preconnect" href="https://fonts.gstatic.com">
-    <link href="https://fonts.googleapis.com/css2?family=Inter&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet">
     <style>
-      html { font-family: "Inter", system-ui; }
+      html { font-family: "Roboto", system-ui; }
 
       /* A hack to avoid shifting when the scrollbar appears/disappears when
          moving between pages. */
       html { margin-left: calc(100vw - 100%); }
       /* The hack isn't needed when the max-width can't be reached. */
-      @media (max-width: 800px) {
+      @media (max-width: 900px) {
           html { margin-left: 0; }
       }
 
+      /* Responsive body size (and an appropriate maximum) */
+      body {
+          max-width: 900px;
+          margin: auto;
+      }
+      @media (max-width: 900px) {
+          body {
+              width: auto;
+              margin: 10px;
+          }
+      }
+
+      /* Colors */
       html {
           background-color: #FFFFFD;
           color: #444;
@@ -35,86 +48,107 @@
           a:visited { color: #87E; }
           a:active { color: #C55; }
       }
-
-      body {
-          max-width: 800px;
-          margin: auto;
-      }
-      @media (max-width: 800px) {
-          body {
-              width: auto;
-              margin: 10px;
-          }
-      }
-
       @media (prefers-color-scheme: light) { .error { color: #A11; } }
       @media (prefers-color-scheme: dark) { .error { color: #E66; } }
 
-      #language-selector {
-          display: block;
-          position: absolute;
-          right: 10px;
-          top: 10px;
-          padding: 5px;
-      }
 
+      /* Layout of the main section */
+      body {
+          display: grid;
+          row-gap: 10px;
+          grid-template-areas:
+              "skip-nav-link skip-nav-link"
+              ". ."
+              "header nav"
+              "main   main"
+              "footer footer";
+      }
+      #skip-nav-link { grid-area: skip-nav-link; }
+      header { grid-area: header; }
+      nav { grid-area: nav; }
+      main { grid-area: main; }
+      footer { grid-area: footer; }
+
+      /* Styles for the contents of the main sections */
       #skip-nav-link {
-          display: block;
-          position: absolute;
-          top: 0px;
-          left: 0px;
-          width: 100%;
           text-align: center;
       }
       #skip-nav-link:not(:focus) { opacity: 0; }
-
-      #content {
-          margin-top: 30px;
-          margin-bottom: 30px;
+      header h1 { margin: 0px; }
+      nav {
+          display: grid;
+          grid-template-columns: 1fr;
+          row-gap: 10px;
       }
-
-      .inline-form {
-          display: inline-block;
+      nav > * {
+          grid-column: span 1;
+          text-align: right;
       }
-
-      footer {
-          margin-bottom: 20px;
-      }
+      footer { margin-bottom: 20px; }
 
       /* A class for elements (mostly brs) which improve usability
        * for browsers that do not support CSS at all. */
       .for-no-css { display: none; }
+
+      /* Post styling */
+      h4 {
+          margin: 0px;
+      }
+      .post-container {
+          padding: 10px;
+          margin-top: 20px;
+          margin-bottom: 20px;
+      }
+      .post-content h1, .post-content h2, .post-content h3,
+      .post-content h4, .post-content h5, .post-content h6 {
+          font-size: 1rem;
+          font-weight: bold;
+          margin: 0px;
+          margin-top: 1em;
+      }
+      .post-content blockquote {
+          padding: 0px;
+          margin: 0px;
+      }
+      .post-content blockquote > *::before {
+          content: "> ";
+      }
     </style>
     {% block head %}{% endblock %}
   </head>
   <body>
     <a id="skip-nav-link" href="#content">Skip to content</a>
-    <!-- TODO(accessibility): ARIA labels -->
-    <form id="language-selector" action="/change_language" method="POST">
-      <!-- TODO(security): CSRF protection -->
-      <select name="new_language">
-        {% for language in languages %}
-        <option {% if language == current_language %}selected{% endif %}>{{ language }}</option>
-        {% endfor %}
-      </select>
-      <input type="hidden" name="redirect_url" value="{{ current_path }}">
-      <button type="submit">{{ _("Change language") }}</button>
-    </form>
 
     <header>
       <a href="/"><h1>{{ _("Forum") }}</h1></a>
     </header>
 
-    {% if logged_in_user is not none %}
-    <aside id="logout-form">
-      {{ _("Logged in as %(username)s.", username=logged_in_user) }}
+    <nav>
+      <form id="language-selector" action="/change_language" method="POST">
+        <!-- TODO(security): CSRF protection -->
+        <select name="new_language">
+          {% for language in languages %}
+          <option {% if language == current_language %}selected{% endif %}>{{ language }}</option>
+          {% endfor %}
+        </select>
+        <input type="hidden" name="redirect_url" value="{{ current_path }}">
+        <button type="submit">{{ _("Change language") }}</button>
+      </form>
+
+      {% if logged_in_user is not none %}
       <form class="inline-form" action="/logout" method="POST">
         <!-- TODO(security): CSRF protection -->
+        {{ _("Logged in as %(username)s.", username=logged_in_user) }}
         <input type="hidden" name="redirect_url" value="{{ current_path }}">
         <button type="submit">{{ _("Logout") }}</button>
       </form>
-    </aside>
-    {% endif %}
+
+      <form action="/search" method="GET">
+        <input id="search" type="search" name="q" placeholder="{{ _("Search for posts") }}">
+        <button type="submit">{{ _("Search") }}</button>
+      </form>
+      {% endif %}
+    </nav>
 
     <main id="content">
       {% block content %}{% endblock %}

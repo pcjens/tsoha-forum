@@ -6,7 +6,7 @@
       display: grid;
       margin-top: 20px;
       margin-bottom: 20px;
-      grid-template-columns: 1fr 100px 200px;
+      grid-template-columns: 1fr 100px 160px;
       column-gap: 10px;
       row-gap: 10px;
   }
@@ -33,9 +33,8 @@
       cursor: pointer;
   }
   .form-container {
-      margin: 10px;
+      margin: 20px;
       display: grid;
-      width: 100%;
       grid-template-columns: auto 1fr;
       column-gap: 20px;
       row-gap: 5px;
@@ -55,7 +54,7 @@
 </style>
 {% endblock %}
 {% block content %}
-<a href="/board/{{ board_id }}"><h3>{{ board_name }}</h3></a>
+<h3>{{ board_name }}</h3>
 
 <details class="topic-creation-menu">
   <summary>{{ _("Create a new topic") }}</summary>

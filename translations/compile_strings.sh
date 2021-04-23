@@ -10,3 +10,4 @@ if [ ! -e "compile_strings.sh" ]; then
 fi
 
 msgfmt -o fi/LC_MESSAGES/tsohaforum.mo fi/LC_MESSAGES/tsohaforum.po
+msgfmt -o en/LC_MESSAGES/tsohaforum.mo en/LC_MESSAGES/tsohaforum.po

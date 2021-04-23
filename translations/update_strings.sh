@@ -21,6 +21,6 @@ echo '' >> tsohaforum.po
 
 # Note: xgettext doesn't support HTML, but it seems to work ok with
 # the language set to Python. It crashes if it's set to Javascript.
-SRC_FILES=../forum/templates/*
-xgettext --language=python --omit-header --default-domain=tsohaforum --join-existing --output-dir=./ $SRC_FILES
+SRC_FILES="../forum/routes.py "../forum/templates/*
 xgettext --language=python --omit-header --default-domain=tsohaforum --join-existing --output-dir=./fi/LC_MESSAGES/ $SRC_FILES
+xgettext --language=python --omit-header --default-domain=tsohaforum --join-existing --output-dir=./en/LC_MESSAGES/ $SRC_FILES

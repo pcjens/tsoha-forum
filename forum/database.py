@@ -202,6 +202,20 @@ class ForumDatabase:
             posts.append((post_id, username, title, content, creation_time, edit_time, owned))
         return posts
 
+    def search_posts(self, language: str, search_string: str) -> List[Any]:
+        """Returns a list of posts related to the given search string."""
+
+        sql = ("select post_id, u.username, title, content, "
+               "p.creation_time, edit_time, p.author_user_id "
+               "from posts as p join users as u on author_user_id = user_id "
+               "where content like '%foo%' ")
+        results = self.database.session.execute(sql).fetchall()
+        posts: List[Any] = []
+        for result in results:
+            post_id, username, title, content, creation_time, edit_time, author_user_id = result
+            posts.append((post_id, username, title, content, creation_time, edit_time))
+        return posts
+
     def get_username(self, user_id: Optional[int]) -> Optional[str]:
         """Returns the username of the user with the given id, or None if there is no
         user with the id, or the id is None."""

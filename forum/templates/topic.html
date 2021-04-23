@@ -1,34 +1,9 @@
 {% extends "base.html" %}
 {% block head %}
 <style>
-  /* Post styling */
-  h4 {
-      margin: 0px;
-  }
-  .post-container {
-      padding: 10px;
-      margin-top: 20px;
-      margin-bottom: 20px;
-  }
-  .post-content h1, .post-content h2, .post-content h3,
-  .post-content h4, .post-content h5, .post-content h6 {
-      font-size: 1rem;
-      font-weight: bold;
-      margin: 0px;
-      margin-top: 1em;
-  }
-  .post-content blockquote {
-      padding: 0px;
-      margin: 0px;
-  }
-  .post-content blockquote > *::before {
-      content: "> ";
-  }
   .delete-form {
       margin-top: 4px;
   }
-
-  /* Reply form styling */
   .post-container:target {
       outline: 3px dotted #88F;
   }
@@ -67,8 +42,9 @@
 {% endblock %}
 {% block content %}
 <h3>
-  <a href="/board/{{ board_id }}">{{ board_name }}</a>:
-  <a href="/board/{{ board_id }}/topic/{{ topic_id }}">{{ topic_name }}</a>
+  <a href="/board/{{ board_id }}">{{ board_name }}</a>
+  &gt;
+  {{ topic_name }}
 </h3>
 
 {% for id, author, title, content, creation_time, edit_time, owned in posts %}

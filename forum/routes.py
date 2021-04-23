@@ -37,13 +37,13 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         # Environment is so dynamic, even pylint doesn't like it.
         # pylint: disable = E1101
         jinja_env.install_gettext_translations(translations, newstyle = True)
-        return jinja_env
+        return jinja_env, translations
 
     jinja_envs = {}
+    translations = {}
     for lang in os.listdir("translations/"):
         if os.path.isdir("translations/{}".format(lang)):
-            jinja_envs[lang] = make_jinja_env(lang, False)
-    jinja_envs["en"] = make_jinja_env("en", True)
+            jinja_envs[lang], translations[lang] = make_jinja_env(lang, False)
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
 
     def fill_and_render_template(template_path: str, variables: Dict[str, Any]) -> Any:
@@ -57,7 +57,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             "lang": lang,
             "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
-            "current_path": request.path,
+            "current_path": request.full_path,
             "logged_in_user": logged_in_user
         })
         return template.render(variables)
@@ -204,3 +204,20 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         if len(posts_after) > 0:
             return redirect("/board/{}/topic/{}".format(board_id, topic_id))
         return redirect("/board/{}".format(board_id))
+
+    @app.route("/search", methods = ["GET"])
+    @login_required
+    @templated("search.html")
+    def search() -> Dict[str, Any]:
+        query_string = request.args.get("q")
+        if query_string is None:
+            return { "error_code": 404 }
+        lang = session.get("lang", default_lang)
+        def _(message: str) -> str:
+            translated_string: str = translations[lang].gettext(message)
+            return translated_string
+        search_language = _("postgres-search-dictionary")
+        return {
+            "query_string": query_string,
+            "posts": database.search_posts(search_language, query_string)
+        }
