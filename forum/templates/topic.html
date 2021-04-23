@@ -70,6 +70,7 @@
   <a href="/board/{{ board_id }}">{{ board_name }}</a>:
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}">{{ topic_name }}</a>
 </h3>
+
 {% for id, author, title, content, creation_time, edit_time, owned in posts %}
 <article id="{{ id }}" class="post-container">
   <h4>{{ author }}: {{ title }}</h4>

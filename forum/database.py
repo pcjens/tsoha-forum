@@ -141,7 +141,16 @@ class ForumDatabase:
                    "join topics on parent_topic_id = topic_id "
                    "where parent_board_id = :board_id")
             posts = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
-            boards.append((board_id, title, description, topics, posts))
+            sql = ("select parent_topic_id, post_id, title, creation_time from posts "
+                   "join topics on parent_topic_id = topic_id "
+                   "where parent_board_id = :board_id "
+                   "order by creation_time desc limit 1")
+            result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()
+            last_topic_id, last_post_id, last_title, last_time = (None, None, None, None)
+            if result is not None:
+                last_topic_id, last_post_id, last_title, last_time = result
+            boards.append((board_id, title, description, topics, posts, last_topic_id,
+                           last_post_id, last_title, last_time))
         return boards
 
     def get_topics(self, board_id: int) -> List[Any]:
@@ -162,16 +171,18 @@ class ForumDatabase:
                 # topic and first post.
                 continue
             title, author_user_id = result
-            sql = ("select creation_time from posts "
+            sql = ("select post_id, title, creation_time from posts "
                    "where parent_topic_id = :topic_id "
                    "order by creation_time desc limit 1")
-            result = self.database.session.execute(sql, { "topic_id": topic_id })
-            latest_post_time = result.fetchone()[0]
+            result = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()
+            last_post_id, last_title, last_time = (None, None, None)
+            if result is not None:
+                last_post_id, last_title, last_time = result
             sql = "select username from users where user_id = :user_id"
             author = self.database.session.execute(sql, { "user_id": author_user_id }).fetchone()[0]
             sql = "select count(*) - 1 from posts where parent_topic_id = :topic_id"
             replies = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
-            topics.append((topic_id, title, author, replies, latest_post_time))
+            topics.append((topic_id, title, author, replies, last_post_id, last_title, last_time))
         topics.sort(key = lambda row: cast(datetime, row[4]), reverse = True)
         return topics
 

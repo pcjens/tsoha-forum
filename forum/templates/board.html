@@ -6,7 +6,7 @@
       display: grid;
       margin-top: 20px;
       margin-bottom: 20px;
-      grid-template-columns: 1fr 100px;
+      grid-template-columns: 1fr 100px 200px;
       column-gap: 10px;
       row-gap: 10px;
   }
@@ -16,6 +16,16 @@
   .topic-replies {
       grid-column: 2 / span 1;
       text-align: center;
+  }
+  .topic-latest-posts {
+      grid-column: 3 / span 1;
+  }
+  .topic-latest-posts > .post-title {
+      display: block;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
   }
 
   /* Topic creation menu styling */
@@ -65,12 +75,21 @@
 <div class="topics">
   <strong class="topic-description">{{ _("Topic") }}</strong>
   <strong class="topic-replies">{{ _("Replies") }}</strong>
-  {% for id, title, author, replies, latest_post_time in topics %}
+  <strong class="topic-latest-posts">{{ _("Latest post") }}</strong>
+  {% for id, title, author, replies, last_post_id, last_title, last_time in topics %}
   <article class="topic-description">
     <a href="/board/{{ board_id }}/topic/{{ id }}"><strong>{{ title }}</strong></a>
     <aside>{{ _("Conversation started by %(author)s", author=author) }}</aside>
   </article>
   <aside class="topic-replies">{{ replies }}</aside>
+  <aside class="topic-latest-posts">
+    {% if last_topic_id is not none %}
+    <a class="post-title" href="/board/{{ board_id }}/topic/{{ id }}#{{ last_post_id }}">
+      {{ last_title }}
+    </a>
+    <time datetime="{{ last_time }}">{{ last_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
+    {% endif %}
+  </aside>
   {% endfor %}
 </div>
 {% endblock %}

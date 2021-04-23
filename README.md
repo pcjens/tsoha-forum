@@ -26,7 +26,7 @@ list of concrete features to be filled out as the project develops:
 - [x] Users can register, login, and logout.
 - [x] The front page has of a list of boards. Each board should
       display the amount of topics and messages.
-- [ ] The board and topic listings should display the title and date
+- [x] The board and topic listings show the title and date
       of the latest post on the board or topic.
 - [x] Users can create new topics.
 - [x] Users can post new messages in existing topics.

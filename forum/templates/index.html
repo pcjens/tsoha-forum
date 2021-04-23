@@ -5,12 +5,15 @@
       display: grid;
       margin-top: 20px;
       margin-bottom: 20px;
-      grid-template-columns: 1fr 100px 100px;
+      grid-template-columns: 1fr 100px 100px 200px;
       column-gap: 10px;
       row-gap: 10px;
   }
   .board-description {
       grid-column: 1 / span 1;
+  }
+  .board-description > .board-title {
+      margin-bottom: 2px;
   }
   .board-topics {
       grid-column: 2 / span 1;
@@ -20,6 +23,16 @@
       grid-column: 3 / span 1;
       text-align: center;
   }
+  .board-latest-posts {
+      grid-column: 4 / span 1;
+  }
+  .board-latest-posts > .post-title {
+      display: block;
+      margin-bottom: 2px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+  }
 </style>
 {% endblock %}
 {% block content %}
@@ -27,13 +40,22 @@
   <strong class="board-description">{{ _("Board") }}</strong>
   <strong class="board-topics">{{ _("Topics") }}</strong>
   <strong class="board-posts">{{ _("Posts") }}</strong>
-  {% for id, title, desc, topics, posts in boards %}
+  <strong class="board-latest-posts">{{ _("Latest post") }}</strong>
+  {% for id, title, desc, topics, posts, last_topic_id, last_post_id, last_title, last_time in boards %}
   <article class="board-description">
-    <a href="/board/{{ id }}"><strong>{{ title }}</strong></a>
+    <a href="/board/{{ id }}" ><strong>{{ title }}</strong></a>
     <aside>{{ desc }}</aside>
   </article>
   <aside class="board-topics">{{ topics }}</aside>
   <aside class="board-posts">{{ posts }}</aside>
+  <aside class="board-latest-posts">
+    {% if last_topic_id is not none %}
+    <a class="post-title" href="/board/{{ id }}/topic/{{ last_topic_id }}#{{ last_post_id }}">
+      {{ last_title }}
+    </a>
+    <time datetime="{{ last_time }}">{{ last_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
+    {% endif %}
+  </aside>
   {% endfor %}
 </div>
 {% endblock %}
