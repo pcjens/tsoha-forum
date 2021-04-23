@@ -8,6 +8,7 @@ from flask import Flask
 from werkzeug.security import generate_password_hash, check_password_hash
 from mistletoe import HTMLRenderer, Document # type: ignore
 import bleach
+from forum.validation import is_valid_title
 
 class ForumDatabase:
     """Holder of database access, provider of persistent data."""
@@ -64,8 +65,15 @@ class ForumDatabase:
     def delete_post(self, post_id: int, user_id: int) -> None:
         """Deletes the post if the user owns it."""
 
-        sql = "delete from posts where author_user_id = :user_id and post_id = :post_id"
-        self.database.session.execute(sql, { "user_id": user_id, "post_id": post_id })
+        sql = ("delete from posts where author_user_id = :user_id and post_id = :post_id "
+               "returning parent_topic_id")
+        result = self.database.session.execute(sql, { "user_id": user_id, "post_id": post_id })
+        topic_id = result.fetchone()[0]
+        sql = "select count(*) = 0 from posts where parent_topic_id = :topic_id"
+        emptied_topic = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
+        if emptied_topic:
+            sql = "delete from topics where topic_id = :topic_id"
+            self.database.session.execute(sql, { "topic_id": topic_id })
         self.database.session.commit()
 
     def create_post(self, topic_id: int, user_id: int, title: str, content: str) -> Optional[int]:
@@ -76,13 +84,13 @@ class ForumDatabase:
         if result == 0:
             return None
 
-        title = bleach.clean(title)
+        title = bleach.clean(title.strip())
         # Sanitize any html aside from '>' signs, because they have a
         # use in Markdown.
         content = bleach.clean(content).replace("&gt;", ">")
         markdown_source = Document(content)
         content = self.markdown_renderer.render(markdown_source)
-        if len(title) == 0:
+        if not is_valid_title(title):
             return None
 
         sql = ("insert into posts (parent_topic_id, author_user_id, title, content, creation_time) "
@@ -102,9 +110,6 @@ class ForumDatabase:
         """Creates a new topic on the board, with the initial post containing
         the given title and content."""
 
-        if len(title) == 0:
-            return None
-
         sql = "select count(*) from boards where board_id = :board_id"
         result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
         if result == 0:
@@ -113,8 +118,13 @@ class ForumDatabase:
         sql = ("insert into topics (parent_board_id, sticky) values (:board_id, FALSE)"
                "returning topic_id")
         topic_id: int = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+        # Don't commit yet, as create_post may fail.
+        post_id = self.create_post(topic_id, user_id, title, content)
+        if post_id is None:
+            return None
+        # This is technically not needed, create_post already
+        # committed, but future refactoring may change this.
         self.database.session.commit()
-        self.create_post(topic_id, user_id, title, content)
         return topic_id
 
     def get_boards(self) -> List[Any]:

@@ -83,9 +83,15 @@
     <time datetime="{{ creation_time }}">{{ creation_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
   </a>
   {% if owned %}
-  <form class="delete-form" action="/board/{{ board_id }}/topic/{{ topic_id }}/delete/{{ id }}" method="POST">
-    <button type="submit">{{ _("Delete") }}</button>
-  </form>
+  <details>
+    <summary>{{ _("Delete") }}</summary>
+    <form class="delete-form" action="/board/{{ board_id }}/topic/{{ topic_id }}/delete/{{ id }}" method="POST">
+      <input id="delete-confirm" type="checkbox" name="confirm_deletion" value="">
+      <label for="delete-confirm">{{ _("Yes, I really want to delete this post.") }}</label>
+      <br>
+      <button type="submit">{{ _("Delete") }}</button>
+    </form>
+  </details>
   {% endif %}
 </article>
 {% endfor %}
@@ -94,10 +100,10 @@
   <h4 class="form-header">{{ _("Reply to this topic") }}</h4>
   <!-- TODO(security): CSRF protection -->
   <label class="form-label" for="input-title">{{ _("Title") }}</label>
-  <input class="form-input" id="input-title" type="text" name="title" value="Re: {{ topic_name }}" minlength=1 maxlength=53>
+  <input class="form-input" id="input-title" type="text" name="title" value="Re: {{ topic_name }}" minlength=1 maxlength=54 required>
   <br class="for-no-css">
   <label class="form-label" for="input-content">{{ _("Message") }}</label>
-  <textarea class="form-input" id="input-content" name="content"></textarea>
+  <textarea class="form-input" id="input-content" name="content" required></textarea>
   <br class="for-no-css">
   <input type="hidden" name="redirect_url" value="{{ current_path }}">
   <button class="form-submit" type="submit">{{ _("Reply") }}</button>

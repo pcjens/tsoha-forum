@@ -16,6 +16,7 @@ from jinja2 import Environment, PackageLoader, select_autoescape
 from flask import session, request, redirect, Flask
 from werkzeug import Response
 from forum.database import ForumDatabase
+from forum.validation import is_valid_username, is_valid_password
 
 def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R0914, R0915
     """Sets up Flask routes and the templating system.
@@ -49,12 +50,15 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         lang = session.get("lang", default_lang)
         jinja_env = jinja_envs[lang]
         template = jinja_env.get_template(template_path)
+        logged_in_user = None
+        if "user_id" in session:
+            logged_in_user = database.get_username(session["user_id"])
         variables.update({
             "lang": lang,
             "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
             "current_path": request.path,
-            "logged_in_user": session.get("username")
+            "logged_in_user": logged_in_user
         })
         return template.render(variables)
 
@@ -143,7 +147,6 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     def logout() -> Response:
         if "user_id" in session:
             del session["user_id"]
-            del session["username"]
         return redirect(request.form["redirect_url"])
 
     @app.route("/login", methods = ["POST"])
@@ -151,7 +154,6 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         user_id = database.login(request.form["username"], request.form["password"])
         if user_id is not None and database.logged_in(user_id):
             session["user_id"] = user_id
-            session["username"] = database.get_username(user_id)
             return redirect(request.form["redirect_url"])
         return redirect_form_error("invalid_credentials")
 
@@ -161,10 +163,13 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         password = request.form["password"]
         if password != request.form["confirm-password"]:
             return redirect_form_error("passwords_dont_match")
+        if not is_valid_username(username):
+            return redirect_form_error("invalid_username")
+        if not is_valid_password(password):
+            return redirect_form_error("invalid_password")
         if database.register(username, password):
             user_id = database.login(username, password)
             session["user_id"] = user_id
-            session["username"] = database.get_username(user_id)
             return redirect(request.form["redirect_url"])
         return redirect_form_error("username_taken")
 
@@ -175,7 +180,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         content = request.form["content"]
         topic_id = database.create_topic(board_id, session["user_id"], title, content)
         if topic_id is None:
-            return redirect(request.form["redirect_uri"])
+            return redirect(request.form["redirect_url"])
         return redirect("/board/{}/topic/{}".format(board_id, topic_id))
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>", methods = ["POST"])
@@ -185,13 +190,15 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         content = request.form["content"]
         post_id = database.create_post(topic_id, session["user_id"], title, content)
         if post_id is None:
-            return redirect(request.form["redirect_uri"])
+            return redirect(request.form["redirect_url"])
         return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>/delete/<int:post_id>",
                methods = ["POST"])
     @login_required
     def delete_post(board_id: int, topic_id: int, post_id: int) -> Any:
+        if "confirm_deletion" not in request.form:
+            return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
         database.delete_post(post_id, session["user_id"])
         posts_after = database.get_posts(topic_id, session["user_id"])
         if len(posts_after) > 0:

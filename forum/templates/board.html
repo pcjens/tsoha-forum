@@ -52,10 +52,10 @@
   <form class="form-container" action="/board/{{ board_id }}" method="POST">
     <!-- TODO(security): CSRF protection -->
     <label class="form-label" for="input-title">{{ _("Title") }}</label>
-    <input class="form-input" id="input-title" type="text" name="title" minlength=1 maxlength=50>
+    <input class="form-input" id="input-title" type="text" name="title" minlength=1 maxlength=50 required>
     <br class="for-no-css">
     <label class="form-label" for="input-content">{{ _("Message") }}</label>
-    <textarea class="form-input" id="input-content" name="content"></textarea>
+    <textarea class="form-input" id="input-content" name="content" required></textarea>
     <br class="for-no-css">
     <input type="hidden" name="redirect_url" value="{{ current_path }}">
     <button class="form-submit" type="submit">{{ _("Create") }}</button>

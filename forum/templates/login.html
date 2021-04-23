@@ -29,26 +29,39 @@
           display: none;
       }
   }
+  .error {
+      max-width: 400px;
+      margin: auto;
+      text-align: center;
+  }
 </style>
 {% endblock %}
 
 {% block content %}
+{% if error == "invalid_credentials" %}
+<p class="error" role="alert">{{ _("Wrong username or password.") }}</p>
+{% elif error == "username_taken" %}
+<p class="error" role="alert">{{ _("The username <b>%(username)s</b> is taken.", username=username) }}</p>
+{% elif error == "passwords_dont_match" %}
+<p class="error" role="alert">{{ _("The two passwords don't match.") }}</p>
+{% elif error == "invalid_username" %}
+<p class="error" role="alert">{{ _("Invalid username. Usernames must not start or end with spaces, and must not be empty.") }}</p>
+{% elif error == "invalid_password" %}
+<p class="error" role="alert">{{ _("Invalid password. Passwords must be 10 characters or longer, and not within the top one million most common passwords.") }} <a href="https://github.com/danielmiessler/SecLists">(SecLists)</a></p>
+{% endif %}
+
 <div class="forms-container">
   <form action="/login" method="POST">
     <h3 class="form-title">{{ _("Log in") }}</h3>
     <!-- TODO(security): CSRF protection -->
 
-    {% if error == "invalid_credentials" %}
-    <p class="error" role="alert">{{ _("Wrong username or password.") }}</p>
-    {% endif %}
-
     <label>
       {{ _("Username") }}
-      <input class="form-input" type="text" name="username">
+      <input class="form-input" type="text" name="username" required>
     </label><br class="for-no-css">
     <label>
       {{ _("Password") }}
-      <input class="form-input" type="password" name="password">
+      <input class="form-input" type="password" name="password" required>
     </label><br class="for-no-css">
     <input type="hidden" name="redirect_url" value="{{ current_path }}">
     <button class="form-submit" type="submit">{{ _("Log in") }}</button>
@@ -58,23 +71,17 @@
     <h3 class="form-title">{{ _("Register") }}</h3>
     <!-- TODO(security): CSRF protection -->
 
-    {% if error == "username_taken" %}
-    <p class="error" role="alert">{{ _("The username <b>%(username)s</b> is taken.", username=username) }}</p>
-    {% elif error == "passwords_dont_match" %}
-    <p class="error" role="alert">{{ _("The two passwords don't match.") }}</p>
-    {% endif %}
-
     <label>
       {{ _("Username") }}
-      <input class="form-input" type="text" name="username">
+      <input class="form-input" type="text" name="username" required>
     </label><br class="for-no-css">
     <label>
       {{ _("Password") }}
-      <input class="form-input" type="password" name="password">
+      <input class="form-input" type="password" name="password" required>
     </label><br class="for-no-css">
     <label>
       {{ _("Confirm password") }}
-      <input class="form-input" type="password" name="confirm-password">
+      <input class="form-input" type="password" name="confirm-password" required>
     </label><br class="for-no-css">
     <input type="hidden" name="redirect_url" value="{{ current_path }}">
     <button class="form-submit" type="submit">{{ _("Register") }}</button>
