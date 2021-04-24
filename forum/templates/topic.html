@@ -15,7 +15,6 @@
   .form-container {
       margin: 10px;
       display: grid;
-      width: 100%;
       grid-template-columns: auto 1fr;
       column-gap: 20px;
       row-gap: 5px;
@@ -44,26 +43,52 @@
   {{ topic_name }}
 </h3>
 
-{% for id, author, title, content, creation_time, edit_time, owned in posts %}
+{% for id, author, title, title_original, content, content_original, creation_time, edit_time, owned in posts %}
 <article id="{{ id }}" class="post-container">
   <h4>{{ author }}: {{ title }}</h4>
-  {% if edit_time is not none %}
-  <aside>Edited at <time>{{ edit_time }}</time></aside>
-  {% endif %}
   <div class="post-content">
     {{ content }}
   </div>
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}#{{ id }}" title="Link to post">
     <time datetime="{{ creation_time }}">{{ creation_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
   </a>
+  {% if edit_time is not none %}
+  <aside>
+    {% set edittime -%}
+    <time datetime="{{ edit_time }}">{{ edit_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
+    {%- endset %}
+    <i>{{ _("Edited at: %(datetime)s", datetime=edittime) }}</i>
+  </aside>
+  {% endif %}
   {% if owned %}
   <details>
     <summary>{{ _("Delete") }}</summary>
-    <form class="delete-form" action="/board/{{ board_id }}/topic/{{ topic_id }}/delete/{{ id }}" method="POST">
-      <input id="delete-confirm" type="checkbox" name="confirm_deletion" value="">
-      <label for="delete-confirm">{{ _("Yes, I really want to delete this post.") }}</label>
-      <br>
-      <button type="submit">{{ _("Delete") }}</button>
+    <form class="form-container" action="/board/{{ board_id }}/topic/{{ topic_id }}/delete/{{ id }}" method="POST">
+      <label class="form-input">
+        <input type="checkbox" name="confirm_deletion" required>
+        {{ _("Yes, I really want to delete this post.") }}
+      </label>
+      <br class="for-no-css">
+      <button class="form-submit" type="submit">{{ _("Delete") }}</button>
+    </form>
+  </details>
+  <details>
+    <summary>{{ _("Edit") }}</summary>
+    <form class="form-container" action="/board/{{ board_id }}/topic/{{ topic_id }}/edit/{{ id }}" method="POST">
+      <!-- TODO(security): CSRF protection -->
+      <label class="form-label" for="input-title">{{ _("Title") }}</label>
+      <input class="form-input" id="input-title" type="text" name="title" value="{% if title_original is not none %}{{ title_original }}{% endif %}" minlength=1 maxlength=54 required>
+      <br class="for-no-css">
+      <label class="form-label" for="input-content">{{ _("Message") }}</label>
+      <textarea class="form-input" id="input-content" name="content" minlength="1" maxlength="100000" required>{% if content_original is not none %}{{ content_original }}{% endif %}</textarea>
+      <br class="for-no-css">
+      <label class="form-input">
+        <input type="checkbox" name="confirm_edit" required>
+        {{ _("Yes, I really want to edit this post.") }}
+      </label>
+      <br class="for-no-css">
+      <input type="hidden" name="redirect_url" value="{{ current_path }}">
+      <button class="form-submit" type="submit">{{ _("Edit") }}</button>
     </form>
   </details>
   {% endif %}
@@ -77,7 +102,7 @@
   <input class="form-input" id="input-title" type="text" name="title" value="Re: {{ topic_name }}" minlength=1 maxlength=54 required>
   <br class="for-no-css">
   <label class="form-label" for="input-content">{{ _("Message") }}</label>
-  <textarea class="form-input" id="input-content" name="content" minlength="10" maxlength="100000" required></textarea>
+  <textarea class="form-input" id="input-content" name="content" minlength="1" maxlength="100000" required></textarea>
   <br class="for-no-css">
   <input type="hidden" name="redirect_url" value="{{ current_path }}">
   <button class="form-submit" type="submit">{{ _("Reply") }}</button>

@@ -36,7 +36,7 @@ def is_valid_title(title: str) -> bool:
 def is_valid_post_content(content: str) -> bool:
     """Returns True if the content is allowed."""
 
-    min_length = 10
+    min_length = 1
     max_length = 100000
     return len(content) >= min_length and len(content) <= max_length and \
         not content[0].isspace() and not content[-1].isspace()

@@ -76,6 +76,40 @@ class ForumDatabase:
             self.database.session.execute(sql, { "topic_id": topic_id })
         self.database.session.commit()
 
+    def edit_post(self, post_id: int, user_id: int, title: str, content: str) -> bool:
+        """Edits the topic with the new title and content."""
+
+        sql = ("select count(*) = 1 from posts "
+               "where post_id = :post_id and author_user_id = :user_id")
+        result = self.database.session.execute(sql, { "post_id": post_id, "user_id": user_id })
+        post_exists = result.fetchone()[0]
+        if not post_exists:
+            return False
+
+        title_original = title
+        title = bleach.clean(title.strip())
+        content_original = content
+        content = bleach.clean(content.strip()).replace("&gt;", ">")
+        content = self.markdown_renderer.render(Document(content)).strip()
+        if not is_valid_title(title) or not is_valid_post_content(content):
+            return False
+
+        sql = ("update posts set title = :title, title_original = :title_original, "
+               "content = :content, content_original = :content_original, edit_time = 'now' "
+               "where author_user_id = :user_id and post_id = :post_id")
+        variables = {
+            "user_id": user_id,
+            "post_id": post_id,
+            "title": title,
+            "title_original": title_original,
+            "content": content,
+            "content_original": content_original
+        }
+        self.database.session.execute(sql, variables)
+        self.database.session.commit()
+
+        return True
+
     def create_post(self, topic_id: int, user_id: int, title: str, content: str) -> Optional[int]:
         """Creates a new topic in the given topic."""
 
@@ -84,26 +118,30 @@ class ForumDatabase:
         if result == 0:
             return None
 
+        title_original = title
         title = bleach.clean(title.strip())
-        # Sanitize any html aside from '>' signs, because they have a
-        # use in Markdown.
+        content_original = content
         content = bleach.clean(content.strip()).replace("&gt;", ">")
-        markdown_source = Document(content)
-        content = self.markdown_renderer.render(markdown_source).strip()
+        content = self.markdown_renderer.render(Document(content)).strip()
         if not is_valid_title(title) or not is_valid_post_content(content):
             return None
 
-        sql = ("insert into posts (parent_topic_id, author_user_id, title, content, creation_time) "
-               "values (:topic_id, :user_id, :title, :content, 'now') "
+        sql = ("insert into posts (parent_topic_id, author_user_id, title, title_original, "
+               "content, content_original, creation_time) "
+               "values (:topic_id, :user_id, :title, :title_original, "
+               ":content, :content_original, 'now') "
                "returning post_id")
         variables = {
             "topic_id": topic_id,
             "user_id": user_id,
             "title": title,
-            "content": content
+            "title_original": title_original,
+            "content": content,
+            "content_original": content_original
         }
         post_id: int = self.database.session.execute(sql, variables).fetchone()[0]
         self.database.session.commit()
+
         return post_id
 
     def create_topic(self, board_id: int, user_id: int, title: str, content: str) -> Optional[int]:
@@ -188,18 +226,21 @@ class ForumDatabase:
 
     def get_posts(self, topic_id: int, user_id: int) -> List[Any]:
         """Returns a list of posts for the given topic."""
+        # pylint: disable = R0914
 
-        sql = ("select post_id, u.username, title, content, "
-               "p.creation_time, edit_time, p.author_user_id "
+        sql = ("select p.post_id, u.username, p.title, p.title_original, "
+               "p.content, p.content_original, p.creation_time, p.edit_time, p.author_user_id "
                "from posts as p join users as u on author_user_id = user_id "
                "where parent_topic_id = :topic_id "
                "order by p.creation_time asc")
         results = self.database.session.execute(sql, { "topic_id": topic_id }).fetchall()
         posts: List[Any] = []
         for result in results:
-            post_id, username, title, content, creation_time, edit_time, author_user_id = result
+            post_id, username, title, title_original, content, content_original, \
+                creation_time, edit_time, author_user_id = result
             owned = author_user_id == user_id
-            posts.append((post_id, username, title, content, creation_time, edit_time, owned))
+            posts.append((post_id, username, title, title_original, content, content_original,
+                          creation_time, edit_time, owned))
         return posts
 
     def search_posts(self, dictionary: str, search_string: str) -> List[Any]:

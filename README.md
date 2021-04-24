@@ -30,7 +30,7 @@ list of concrete features to be filled out as the project develops:
       of the latest post on the board or topic.
 - [x] Users can create new topics.
 - [x] Users can post new messages in existing topics.
-- [ ] Users can modify their own topics and messages.
+- [x] Users can modify their own topics and messages.
 - [x] Users can search for messages powered by [PostgreSQL's full text
       search](https://www.postgresql.org/docs/9.5/textsearch.html).
   - The search uses the correct dictionary for the user's language,

@@ -193,6 +193,16 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             return redirect(request.form["redirect_url"])
         return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
 
+    @app.route("/board/<int:board_id>/topic/<int:topic_id>/edit/<int:post_id>", methods = ["POST"])
+    @login_required
+    def edit_post(board_id: int, topic_id: int, post_id: int) -> Any:
+        if "confirm_edit" not in request.form:
+            return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
+        title = request.form["title"]
+        content = request.form["content"]
+        database.edit_post(post_id, session["user_id"], title, content)
+        return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
+
     @app.route("/board/<int:board_id>/topic/<int:topic_id>/delete/<int:post_id>",
                methods = ["POST"])
     @login_required

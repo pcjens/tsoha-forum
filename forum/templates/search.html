@@ -1,21 +1,26 @@
 {% extends "base.html" %}
 {% block content %}
 <h3>
-  Results for "{{ query_string }}":
+  {{ _("Results for \"%(query)s\":", query=query_string) }}
 </h3>
 
 {% for post_id, topic_id, board_id, author, title, content, creation_time, edit_time in posts %}
 <article id="{{ post_id }}" class="post-container">
   <h4>{{ author }}: {{ title }}</h4>
-  {% if edit_time is not none %}
-  <aside>Edited at <time>{{ edit_time }}</time></aside>
-  {% endif %}
   <div class="post-content">
     {{ content }}
   </div>
   <a href="/board/{{ board_id }}/topic/{{ topic_id }}#{{ post_id }}" title="Link to post">
     <time datetime="{{ creation_time }}">{{ creation_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
   </a>
+  {% if edit_time is not none %}
+  <aside>
+    {% set edittime -%}
+    <time datetime="{{ edit_time }}">{{ edit_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
+    {%- endset %}
+    <i>{{ _("Edited at: %(datetime)s", datetime=edittime) }}</i>
+  </aside>
+  {% endif %}
 </article>
 {% endfor %}
 {% endblock %}

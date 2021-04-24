@@ -2,32 +2,35 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../forum/routes.py:219
+#: ../forum/routes.py:219 ../forum/routes.py:229
 msgid "postgres-search-dictionary"
 msgstr "english"
 
 #: ../forum/templates/base.html:6 ../forum/templates/base.html:123
+#: ../forum/templates/base.html:128
 msgid "Forum"
 msgstr "Forum"
 
-#: ../forum/templates/base.html:135
+#: ../forum/templates/base.html:135 ../forum/templates/base.html:140
 msgid "Change language"
 msgstr "Change language"
 
-#: ../forum/templates/base.html:141
+#: ../forum/templates/base.html:141 ../forum/templates/base.html:146
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr "Logged in as %(username)s."
 
-#: ../forum/templates/base.html:143
+#: ../forum/templates/base.html:143 ../forum/templates/base.html:148
 msgid "Logout"
 msgstr "Logout"
 
 #: ../forum/templates/base.html:148 ../forum/templates/base.html:149
+#: ../forum/templates/base.html:154
 msgid "Search"
 msgstr "Search"
 
 #: ../forum/templates/base.html:158 ../forum/templates/base.html:159
+#: ../forum/templates/base.html:164
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
@@ -35,35 +38,38 @@ msgstr ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
 
-#: ../forum/templates/board.html:60
+#: ../forum/templates/board.html:60 ../forum/templates/board.html:57
 msgid "Create a new topic"
 msgstr "Create a new topic"
 
 #: ../forum/templates/board.html:63 ../forum/templates/topic.html:79
+#: ../forum/templates/board.html:60 ../forum/templates/topic.html:101
 msgid "Title"
 msgstr "Title"
 
 #: ../forum/templates/board.html:66 ../forum/templates/topic.html:82
+#: ../forum/templates/board.html:63 ../forum/templates/topic.html:104
 msgid "Message"
 msgstr "Message"
 
-#: ../forum/templates/board.html:70
+#: ../forum/templates/board.html:70 ../forum/templates/board.html:67
 msgid "Create"
 msgstr "Create"
 
-#: ../forum/templates/board.html:75
+#: ../forum/templates/board.html:75 ../forum/templates/board.html:72
 msgid "Topic"
 msgstr "Topic"
 
-#: ../forum/templates/board.html:76
+#: ../forum/templates/board.html:76 ../forum/templates/board.html:73
 msgid "Replies"
 msgstr "Replies"
 
 #: ../forum/templates/board.html:77 ../forum/templates/index.html:43
+#: ../forum/templates/board.html:74
 msgid "Latest post"
 msgstr "Latest post"
 
-#: ../forum/templates/board.html:81
+#: ../forum/templates/board.html:81 ../forum/templates/board.html:78
 #, python-format
 msgid "Conversation started by %(author)s"
 msgstr "Conversation started by %(author)s"
@@ -150,21 +156,41 @@ msgid "Confirm password"
 msgstr "Confirm password"
 
 #: ../forum/templates/topic.html:64 ../forum/templates/topic.html:69
+#: ../forum/templates/topic.html:65 ../forum/templates/topic.html:72
 msgid "Delete"
 msgstr "Delete"
 
-#: ../forum/templates/topic.html:67
+#: ../forum/templates/topic.html:67 ../forum/templates/topic.html:69
 msgid "Yes, I really want to delete this post."
 msgstr "Yes, I really want to delete this post."
 
-#: ../forum/templates/topic.html:77
+#: ../forum/templates/topic.html:77 ../forum/templates/topic.html:99
 msgid "Reply to this topic"
 msgstr "Reply to this topic"
 
-#: ../forum/templates/topic.html:86
+#: ../forum/templates/topic.html:86 ../forum/templates/topic.html:108
 msgid "Reply"
 msgstr "Reply"
 
-#: ../forum/templates/base.html:147
+#: ../forum/templates/base.html:147 ../forum/templates/base.html:152
 msgid "Search for posts"
+msgstr ""
+
+#: ../forum/templates/topic.html:54 ../forum/templates/search.html:21
+#: ../forum/templates/topic.html:60
+#, python-format
+msgid "Edited at: %(datetime)s"
+msgstr ""
+
+#: ../forum/templates/topic.html:76 ../forum/templates/topic.html:91
+msgid "Edit"
+msgstr ""
+
+#: ../forum/templates/topic.html:87
+msgid "Yes, I really want to edit this post."
+msgstr ""
+
+#: ../forum/templates/search.html:4
+#, python-format
+msgid "Results for \"%(query)s\":"
 msgstr ""
