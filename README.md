@@ -14,8 +14,8 @@ Once logged in, you can:
 - Start a new topic on one of the boards.
 - Post replies to the topics.
 - Delete your own posts.
-- Edit your topics and replies. (Not yet implemented)
-- Search for posts. (Not yet implemented)
+- Edit your topics and replies.
+- Search for posts.
 
 ## Features
 
