@@ -13,7 +13,8 @@ import os
 from functools import wraps
 from typing import Any, Dict, Callable
 from jinja2 import Environment, PackageLoader, select_autoescape
-from flask import session, request, redirect, Flask
+from flask import Flask, redirect, request, send_file, session
+import flask
 from werkzeug import Response
 from forum.database import ForumDatabase
 from forum.validation import is_valid_username, is_valid_password
@@ -45,6 +46,15 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         if os.path.isdir("translations/{}".format(lang)):
             jinja_envs[lang], translations[lang] = make_jinja_env(lang, False)
     default_lang = os.getenv("DEFAULT_LANG", default = "en")
+
+    @app.after_request
+    def add_csp(response: flask.wrappers.Response) -> flask.wrappers.Response:
+        csp = ("default-src 'none'; "
+               "img-src 'self';"
+               "style-src 'unsafe-inline' https://fonts.googleapis.com; "
+               "font-src https://fonts.gstatic.com;")
+        response.headers["Content-Security-Policy"] = csp
+        return response
 
     def fill_and_render_template(template_path: str, variables: Dict[str, Any]) -> Any:
         lang = session.get("lang", default_lang)
@@ -114,6 +124,10 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @templated("")
     def internal_server_error(error: Any) -> Dict[str, int]:
         return { "error_code": 500 }
+
+    @app.route("/favicon.ico")
+    def favicon() -> flask.wrappers.Response:
+        return send_file("favicon.ico", "image/x-icon")
 
     @app.route("/")
     @login_required

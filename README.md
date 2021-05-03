@@ -62,7 +62,7 @@ Technical features / highlights:
       Token
       Pattern](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
       The synchronizer tokens are stored in the database, per-session.
-- [ ] A strict Content-Security-Policy as a last-ditch effort against
+- [x] A strict Content-Security-Policy as a last-ditch effort against
       XSS and similar security issues.
 
 Additional fun features as time allows (I don't necessarily expect to
