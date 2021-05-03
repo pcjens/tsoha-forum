@@ -22,15 +22,15 @@ class ForumDatabase:
         if user_id is None:
             return False
         sql = "select * from users where user_id = :user_id"
-        result = self.database.session.execute(sql, { "user_id": user_id }).fetchone()
+        result = self.database.session.execute(sql, { "user_id": user_id }).first()
         return result is not None
 
     def register(self, username: str, password: str) -> bool:
         """Creates a new user with the given username and password,
         if the username has not been taken. If it has, does nothing and returns False."""
 
-        sql = "select user_id from users where username = :username"
-        result = self.database.session.execute(sql, { "username": username }).fetchone()
+        sql = "select * from users where username = :username"
+        result = self.database.session.execute(sql, { "username": username }).first()
         if result is not None:
             return False
 
@@ -48,7 +48,7 @@ class ForumDatabase:
         If no such combination is found, None is returned."""
 
         sql = "select user_id, password_hash from users where username = :username"
-        result = self.database.session.execute(sql, { "username": username }).fetchone()
+        result = self.database.session.execute(sql, { "username": username }).first()
         if result is None:
             return None
 
@@ -68,9 +68,9 @@ class ForumDatabase:
         sql = ("delete from posts where author_user_id = :user_id and post_id = :post_id "
                "returning parent_topic_id")
         result = self.database.session.execute(sql, { "user_id": user_id, "post_id": post_id })
-        topic_id = result.fetchone()[0]
+        topic_id = result.scalar()
         sql = "select count(*) = 0 from posts where parent_topic_id = :topic_id"
-        emptied_topic = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
+        emptied_topic = self.database.session.execute(sql, { "topic_id": topic_id }).scalar()
         if emptied_topic:
             sql = "delete from topics where topic_id = :topic_id"
             self.database.session.execute(sql, { "topic_id": topic_id })
@@ -82,7 +82,7 @@ class ForumDatabase:
         sql = ("select count(*) = 1 from posts "
                "where post_id = :post_id and author_user_id = :user_id")
         result = self.database.session.execute(sql, { "post_id": post_id, "user_id": user_id })
-        post_exists = result.fetchone()[0]
+        post_exists = result.scalar()
         if not post_exists:
             return False
 
@@ -114,7 +114,7 @@ class ForumDatabase:
         """Creates a new topic in the given topic."""
 
         sql = "select count(*) from topics where topic_id = :topic_id"
-        result = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
+        result = self.database.session.execute(sql, { "topic_id": topic_id }).scalar()
         if result == 0:
             return None
 
@@ -139,7 +139,7 @@ class ForumDatabase:
             "content": content,
             "content_original": content_original
         }
-        post_id: int = self.database.session.execute(sql, variables).fetchone()[0]
+        post_id: int = self.database.session.execute(sql, variables).scalar()
         self.database.session.commit()
 
         return post_id
@@ -149,13 +149,13 @@ class ForumDatabase:
         the given title and content."""
 
         sql = "select count(*) from boards where board_id = :board_id"
-        result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+        result = self.database.session.execute(sql, { "board_id": board_id }).scalar()
         if result == 0:
             return None
 
         sql = ("insert into topics (parent_board_id, sticky) values (:board_id, FALSE) "
                "returning topic_id")
-        topic_id: int = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+        topic_id: int = self.database.session.execute(sql, { "board_id": board_id }).scalar()
         # Don't commit yet, as create_post may fail.
         post_id = self.create_post(topic_id, user_id, title, content)
         if post_id is None:
@@ -174,16 +174,16 @@ class ForumDatabase:
         for result in results:
             board_id, title, description = result
             sql = "select count(*) from topics where parent_board_id = :board_id"
-            topics = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+            topics = self.database.session.execute(sql, { "board_id": board_id }).scalar()
             sql = ("select count(*) from posts "
                    "join topics on parent_topic_id = topic_id "
                    "where parent_board_id = :board_id")
-            posts = self.database.session.execute(sql, { "board_id": board_id }).fetchone()[0]
+            posts = self.database.session.execute(sql, { "board_id": board_id }).scalar()
             sql = ("select parent_topic_id, post_id, title, creation_time from posts "
                    "join topics on parent_topic_id = topic_id "
                    "where parent_board_id = :board_id "
                    "order by creation_time desc limit 1")
-            result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()
+            result = self.database.session.execute(sql, { "board_id": board_id }).first()
             last_topic_id, last_post_id, last_title, last_time = (None, None, None, None)
             if result is not None:
                 last_topic_id, last_post_id, last_title, last_time = result
@@ -202,24 +202,23 @@ class ForumDatabase:
             sql = ("select title, author_user_id from posts "
                    "where parent_topic_id = :topic_id "
                    "order by creation_time asc limit 1")
-            result = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()
+            result = self.database.session.execute(sql, { "topic_id": topic_id }).first()
             if result is None:
-                # A topic without posts: this happens if the server
-                # manages to run into issues between creating the
-                # topic and first post.
+                # This shouldn't happen anymore, but old versions of
+                # tsoha-forum could get the database in this state.
                 continue
             title, author_user_id = result
             sql = ("select post_id, title, creation_time from posts "
                    "where parent_topic_id = :topic_id "
                    "order by creation_time desc limit 1")
-            result = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()
+            result = self.database.session.execute(sql, { "topic_id": topic_id }).first()
             last_post_id, last_title, last_time = (None, None, None)
             if result is not None:
                 last_post_id, last_title, last_time = result
             sql = "select username from users where user_id = :user_id"
-            author = self.database.session.execute(sql, { "user_id": author_user_id }).fetchone()[0]
+            author = self.database.session.execute(sql, { "user_id": author_user_id }).scalar()
             sql = "select count(*) - 1 from posts where parent_topic_id = :topic_id"
-            replies = self.database.session.execute(sql, { "topic_id": topic_id }).fetchone()[0]
+            replies = self.database.session.execute(sql, { "topic_id": topic_id }).scalar()
             topics.append((topic_id, title, author, replies, last_post_id, last_title, last_time))
         topics.sort(key = lambda row: cast(datetime, row[4]), reverse = True)
         return topics
@@ -265,10 +264,8 @@ class ForumDatabase:
         if user_id is None:
             return None
         sql = "select username from users where user_id = :user_id"
-        result = self.database.session.execute(sql, { "user_id": user_id }).fetchone()
-        if result is None:
-            return None
-        return str(result[0])
+        user: Optional[str] = self.database.session.execute(sql, { "user_id": user_id }).scalar()
+        return user
 
     def get_board_name(self, board_id: Optional[int]) -> Optional[str]:
         """Returns the name of the board with the given id, or None if there is no
@@ -277,10 +274,8 @@ class ForumDatabase:
         if board_id is None:
             return None
         sql = "select title from boards where board_id = :board_id"
-        result = self.database.session.execute(sql, { "board_id": board_id }).fetchone()
-        if result is None:
-            return None
-        return str(result[0])
+        title: Optional[str] = self.database.session.execute(sql, { "board_id": board_id }).scalar()
+        return title
 
 
 def run_migrations(app: Flask, sql_alchemy_db: Any) -> bool:
@@ -295,10 +290,10 @@ def run_migrations(app: Flask, sql_alchemy_db: Any) -> bool:
     result = sql_alchemy_db.session.execute("select exists ( select from "
                                 "information_schema.tables where "
                                 "table_name = 'forum_schema_version' )")
-    db_exists = result.fetchone()[0]
+    db_exists = result.scalar()
     if db_exists:
         result = sql_alchemy_db.session.execute("select version from forum_schema_version")
-        db_version = result.fetchone()[0]
+        db_version = result.scalar()
     else:
         db_version = -1
 
@@ -312,7 +307,7 @@ def run_migrations(app: Flask, sql_alchemy_db: Any) -> bool:
                 sql = migration_sql.read()
                 sql_alchemy_db.session.execute(sql)
                 result = sql_alchemy_db.session.execute("select version from forum_schema_version")
-                db_version = result.fetchone()[0]
+                db_version = result.scalar()
                 if db_version != next_db_version:
                     app.logger.error(("Abort! After running migration sql, "
                                       "the version is {}, "
