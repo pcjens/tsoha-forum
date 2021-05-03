@@ -51,14 +51,17 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         jinja_env = jinja_envs[lang]
         template = jinja_env.get_template(template_path)
         logged_in_user = None
+        csrf_token = None
         if "user_id" in session:
             logged_in_user = database.get_username(session["user_id"])
+            csrf_token = database.get_csrf_token(session["user_id"])
         variables.update({
             "lang": lang,
             "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
             "current_path": request.full_path,
-            "logged_in_user": logged_in_user
+            "logged_in_user": logged_in_user,
+            "csrf_token": csrf_token
         })
         return template.render(variables)
 
@@ -69,7 +72,16 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
                 login_params = {}
                 if "error" in request.args:
                     login_params["error"] = request.args["error"]
-                return fill_and_render_template("login.html", login_params), 403
+                return fill_and_render_template("login.html", login_params), 401
+            return route(*args, **kwargs)
+        return decorated_function
+
+    def csrf_token_required(route: Callable[..., Any]) -> Callable[..., Any]:
+        @wraps(route)
+        def decorated_function(*args: Any, **kwargs: Any) -> Any:
+            if ("csrf_token" not in request.form or
+                not database.validate_csrf_token(session["user_id"], request.form["csrf_token"])):
+                return fill_and_render_template("error-403.html", {}), 403
             return route(*args, **kwargs)
         return decorated_function
 
@@ -145,8 +157,8 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @app.route("/logout", methods = ["POST"])
     @login_required
     def logout() -> Response:
-        if "user_id" in session:
-            del session["user_id"]
+        database.logout(session["user_id"])
+        del session["user_id"]
         return redirect(request.form["redirect_url"])
 
     @app.route("/login", methods = ["POST"])
@@ -174,6 +186,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         return redirect_form_error("username_taken")
 
     @app.route("/board/<int:board_id>", methods = ["POST"])
+    @csrf_token_required
     @login_required
     def new_topic(board_id: int) -> Any:
         title = request.form["title"]
@@ -184,6 +197,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         return redirect("/board/{}/topic/{}".format(board_id, topic_id))
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>", methods = ["POST"])
+    @csrf_token_required
     @login_required
     def new_post(board_id: int, topic_id: int) -> Any:
         title = request.form["title"]
@@ -194,6 +208,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>/edit/<int:post_id>", methods = ["POST"])
+    @csrf_token_required
     @login_required
     def edit_post(board_id: int, topic_id: int, post_id: int) -> Any:
         if "confirm_edit" not in request.form:
@@ -205,6 +220,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>/delete/<int:post_id>",
                methods = ["POST"])
+    @csrf_token_required
     @login_required
     def delete_post(board_id: int, topic_id: int, post_id: int) -> Any:
         if "confirm_deletion" not in request.form:

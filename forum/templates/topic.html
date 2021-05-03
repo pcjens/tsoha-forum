@@ -64,6 +64,7 @@
   <details>
     <summary>{{ _("Delete") }}</summary>
     <form class="form-container" action="/board/{{ board_id }}/topic/{{ topic_id }}/delete/{{ id }}" method="POST">
+      {{ csrf_token_input }}
       <label class="form-input">
         <input type="checkbox" name="confirm_deletion" required>
         {{ _("Yes, I really want to delete this post.") }}
@@ -75,7 +76,7 @@
   <details>
     <summary>{{ _("Edit") }}</summary>
     <form class="form-container" action="/board/{{ board_id }}/topic/{{ topic_id }}/edit/{{ id }}" method="POST">
-      <!-- TODO(security): CSRF protection -->
+      {{ csrf_token_input }}
       <label class="form-label" for="input-title">{{ _("Title") }}</label>
       <input class="form-input" id="input-title" type="text" name="title" value="{% if title_original is not none %}{{ title_original }}{% endif %}" minlength=1 maxlength=54 required>
       <br class="for-no-css">
@@ -97,7 +98,7 @@
 
 <form class="form-container" action="/board/{{ board_id }}/topic/{{ topic_id }}" method="POST">
   <h4 class="form-header">{{ _("Reply to this topic") }}</h4>
-  <!-- TODO(security): CSRF protection -->
+  {{ csrf_token_input }}
   <label class="form-label" for="input-title">{{ _("Title") }}</label>
   <input class="form-input" id="input-title" type="text" name="title" value="Re: {{ topic_name }}" minlength=1 maxlength=54 required>
   <br class="for-no-css">

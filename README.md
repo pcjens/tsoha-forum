@@ -31,6 +31,8 @@ list of concrete features to be filled out as the project develops:
 - [x] Users can create new topics.
 - [x] Users can post new messages in existing topics.
 - [x] Users can modify their own topics and messages.
+- [x] Messages are written in Markdown, and sanitized with
+      [bleach](https://pypi.org/project/bleach/).
 - [x] Users can search for messages powered by [PostgreSQL's full text
       search](https://www.postgresql.org/docs/9.5/textsearch.html).
   - The search uses the correct dictionary for the user's language,
@@ -56,18 +58,18 @@ Technical features / highlights:
       [static-analysis](https://github.com/pcjens/tsoha-forum/actions/workflows/static-analysis.yml)
       workflow, using pylint (general lints) and mypy (typechecking).
 - [x] User input is sanitized to avoid XSS attacks.
-- [ ] Forms are protected from CSRF attacks.
+- [x] Forms are protected against CSRF attacks with the [Synchronizer
+      Token
+      Pattern](https://cheatsheetseries.owasp.org/cheatsheets/Cross-Site_Request_Forgery_Prevention_Cheat_Sheet.html#synchronizer-token-pattern).
+      The synchronizer tokens are stored in the database, per-session.
 - [ ] A strict Content-Security-Policy as a last-ditch effort against
       XSS and similar security issues.
 
 Additional fun features as time allows (I don't necessarily expect to
 do any of these, let alone all of them):
 
-- [x] Optional Markdown in messages.
-- [ ] Message preview.
 - [ ] Custom CSS for forms, to fix dark mode on systems without dark
       versions of forms.
-- [ ] Polls attached to messages.
 - [ ] Users can upload avatars that will display next to their
       messages.
 - [ ] Users can have titles associated with their profile, assignable
@@ -77,19 +79,11 @@ do any of these, let alone all of them):
       cause the interface to highlight boards and topics which have
       messages posted after the user previously visited said board or
       topic.
-- [ ] Administrators can configure registration to be closed,
-      invite-only, open with email confirmations, or completely open.
-- [ ] Rules and Privacy Policy pages, and the agreement to those
-      during registration.
-- [ ] Moderation tools, you can never have enough of those:
+- [ ] Moderation tools for users in a moderator group:
   - [ ] Ability to remove and modify any user's posts.
   - [ ] Ability to lock topics.
   - [ ] Ability to remove avatars.
-  - [ ] Ability to silence users for a duration.
   - [ ] Ability to ban users.
-  - [ ] Ability to configure rate-limits for posting frequency.
-  - [ ] A moderator group or per-user-permissions, to enable the
-        creation of moderator accounts without administration rights.
 
 ## Running
 
@@ -152,7 +146,9 @@ log out (or close the terminal) in between sessions.
 
 When deploying for production usage, there should be a reverse proxy
 that accepts HTTPS connections in front of this server, to avoid
-leaking sensitive information.
+leaking sensitive information. Outside of `localhost`, login
+functionality won't even work without a secure reverse proxy, because
+the cookies are restricted to secure connections.
 
 ## License
 This server software is distributed under the terms of the [GNU

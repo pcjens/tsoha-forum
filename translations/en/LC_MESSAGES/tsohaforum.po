@@ -2,35 +2,38 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
-#: ../forum/routes.py:219 ../forum/routes.py:229
+#: ../forum/routes.py:219 ../forum/routes.py:229 ../forum/routes.py:245
 msgid "postgres-search-dictionary"
 msgstr "english"
 
 #: ../forum/templates/base.html:6 ../forum/templates/base.html:123
-#: ../forum/templates/base.html:128
+#: ../forum/templates/base.html:128 ../forum/templates/base.html:132
 msgid "Forum"
 msgstr "Forum"
 
 #: ../forum/templates/base.html:135 ../forum/templates/base.html:140
+#: ../forum/templates/base.html:144
 msgid "Change language"
 msgstr "Change language"
 
 #: ../forum/templates/base.html:141 ../forum/templates/base.html:146
+#: ../forum/templates/base.html:150
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr "Logged in as %(username)s."
 
 #: ../forum/templates/base.html:143 ../forum/templates/base.html:148
+#: ../forum/templates/base.html:152
 msgid "Logout"
 msgstr "Logout"
 
 #: ../forum/templates/base.html:148 ../forum/templates/base.html:149
-#: ../forum/templates/base.html:154
+#: ../forum/templates/base.html:154 ../forum/templates/base.html:158
 msgid "Search"
 msgstr "Search"
 
 #: ../forum/templates/base.html:158 ../forum/templates/base.html:159
-#: ../forum/templates/base.html:164
+#: ../forum/templates/base.html:164 ../forum/templates/base.html:168
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
@@ -44,11 +47,13 @@ msgstr "Create a new topic"
 
 #: ../forum/templates/board.html:63 ../forum/templates/topic.html:79
 #: ../forum/templates/board.html:60 ../forum/templates/topic.html:101
+#: ../forum/templates/topic.html:80 ../forum/templates/topic.html:102
 msgid "Title"
 msgstr "Title"
 
 #: ../forum/templates/board.html:66 ../forum/templates/topic.html:82
 #: ../forum/templates/board.html:63 ../forum/templates/topic.html:104
+#: ../forum/templates/topic.html:83 ../forum/templates/topic.html:105
 msgid "Message"
 msgstr "Message"
 
@@ -157,22 +162,27 @@ msgstr "Confirm password"
 
 #: ../forum/templates/topic.html:64 ../forum/templates/topic.html:69
 #: ../forum/templates/topic.html:65 ../forum/templates/topic.html:72
+#: ../forum/templates/topic.html:73
 msgid "Delete"
 msgstr "Delete"
 
 #: ../forum/templates/topic.html:67 ../forum/templates/topic.html:69
+#: ../forum/templates/topic.html:70
 msgid "Yes, I really want to delete this post."
 msgstr "Yes, I really want to delete this post."
 
 #: ../forum/templates/topic.html:77 ../forum/templates/topic.html:99
+#: ../forum/templates/topic.html:100
 msgid "Reply to this topic"
 msgstr "Reply to this topic"
 
 #: ../forum/templates/topic.html:86 ../forum/templates/topic.html:108
+#: ../forum/templates/topic.html:109
 msgid "Reply"
 msgstr "Reply"
 
 #: ../forum/templates/base.html:147 ../forum/templates/base.html:152
+#: ../forum/templates/base.html:156
 msgid "Search for posts"
 msgstr ""
 
@@ -183,14 +193,24 @@ msgid "Edited at: %(datetime)s"
 msgstr ""
 
 #: ../forum/templates/topic.html:76 ../forum/templates/topic.html:91
+#: ../forum/templates/topic.html:77 ../forum/templates/topic.html:92
 msgid "Edit"
 msgstr ""
 
-#: ../forum/templates/topic.html:87
+#: ../forum/templates/topic.html:87 ../forum/templates/topic.html:88
 msgid "Yes, I really want to edit this post."
 msgstr ""
 
 #: ../forum/templates/search.html:4
 #, python-format
 msgid "Results for \"%(query)s\":"
+msgstr ""
+
+#: ../forum/templates/error-403.html:3
+msgid "403 Forbidden"
+msgstr ""
+
+#: ../forum/templates/error-403.html:4
+msgid ""
+"This request has been blocked for your user. Logging in again could help."
 msgstr ""

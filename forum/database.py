@@ -3,6 +3,7 @@
 from typing import Any, Optional, Callable, cast, List
 from os import getenv
 from datetime import datetime
+import secrets
 from flask_sqlalchemy import SQLAlchemy # type: ignore
 from flask import Flask
 from werkzeug.security import generate_password_hash, check_password_hash
@@ -56,11 +57,39 @@ class ForumDatabase:
         if password_hash is None: # Locked account
             return None
         if cast(Callable[[str, str], bool], check_password_hash)(password_hash, password):
-            sql = "update users set latest_login_time = 'now' where user_id = :user_id"
-            self.database.session.execute(sql, { "user_id": user_id })
+            csrf_token = secrets.token_urlsafe()
+            sql = ("update users set latest_login_time = 'now', csrf_token = :csrf_token "
+                   "where user_id = :user_id")
+            self.database.session.execute(sql, { "user_id": user_id, "csrf_token": csrf_token })
             self.database.session.commit()
             return int(user_id) # reassuring the type system that user_id is an int
         return None
+
+    def logout(self, user_id: str) -> None:
+        """Clears any session-specific database entries related to the user."""
+
+        sql = "update users set csrf_token = null where user_id = :user_id"
+        self.database.session.execute(sql, { "user_id": user_id })
+        self.database.session.commit()
+
+    def validate_csrf_token(self, user_id: int, csrf_token: str) -> bool:
+        """Returns true if the user session has a matching CSRF-prevention token.
+
+        Implemented according to the Synchronizer Token Pattern in the OWASP cheatsheet."""
+
+        sql = "select count(*) from users where user_id = :user_id and csrf_token = :csrf_token"
+        variables = { "user_id": user_id, "csrf_token": csrf_token }
+        matches: int = self.database.session.execute(sql, variables).scalar()
+        return matches == 1
+
+    def get_csrf_token(self, user_id: int) -> Optional[str]:
+        """Returns the synchronizer token to be served to the user, to prevent CSRF attacks.
+
+        Implemented according to the Synchronizer Token Pattern in the OWASP cheatsheet."""
+
+        sql = "select csrf_token from users where user_id = :user_id"
+        token: Optional[str] = self.database.session.execute(sql, { "user_id": user_id }).scalar()
+        return token
 
     def delete_post(self, post_id: int, user_id: int) -> None:
         """Deletes the post if the user owns it."""

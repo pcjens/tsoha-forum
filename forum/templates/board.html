@@ -56,7 +56,7 @@
 <details class="topic-creation-menu">
   <summary>{{ _("Create a new topic") }}</summary>
   <form class="form-container" action="/board/{{ board_id }}" method="POST">
-    <!-- TODO(security): CSRF protection -->
+    {{ csrf_token_input }}
     <label class="form-label" for="input-title">{{ _("Title") }}</label>
     <input class="form-input" id="input-title" type="text" name="title" minlength=1 maxlength=50 required>
     <br class="for-no-css">
