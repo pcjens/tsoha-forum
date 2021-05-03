@@ -205,8 +205,8 @@ msgid ""
 "Invalid password. Passwords must be 10 characters or longer, and not within "
 "the top one million most common passwords."
 msgstr ""
-"Salasanan on oltava 10 merkkiä tai pidempi, ja se ei saa olla yleisimpien "
-"salasanojen joukossa."
+"Salasanan on oltava 10 merkkiä tai pidempi, ja se ei saa löytyä miljoonan "
+"yleisimmän salasanan listalta."
 
 #: ../forum/templates/topic.html:67 ../forum/templates/topic.html:69
 #: ../forum/templates/topic.html:70
