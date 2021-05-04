@@ -10,6 +10,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 from mistletoe import HTMLRenderer, Document # type: ignore
 import bleach
 from forum.validation import is_valid_title, is_valid_post_content
+from forum import migrations
 
 class ForumDatabase:
     """Holder of database access, provider of persistent data."""
@@ -307,49 +308,6 @@ class ForumDatabase:
         return title
 
 
-def run_migrations(app: Flask, sql_alchemy_db: Any) -> bool:
-    """Checks the database's forum_version table for the current version,
-    and applies any unapplied migration files from the migrations
-    directory at the root of the repository. Returns False if all
-    migrations can't be applied.
-    """
-
-    # TODO(stability): Should the database be locked somehow, during migrations? pylint: disable=W0511
-
-    result = sql_alchemy_db.session.execute("select exists ( select from "
-                                "information_schema.tables where "
-                                "table_name = 'forum_schema_version' )")
-    db_exists = result.scalar()
-    if db_exists:
-        result = sql_alchemy_db.session.execute("select version from forum_schema_version")
-        db_version = result.scalar()
-    else:
-        db_version = -1
-
-    app.logger.info("Database version: {}".format(db_version))
-    while True:
-        try:
-            next_db_version = db_version + 1
-            next_sql_path = "forum/migrations/version_{}.sql".format(next_db_version)
-            with open(next_sql_path, "r") as migration_sql:
-                app.logger.info("Migrating to version {}.".format(next_db_version))
-                sql = migration_sql.read()
-                sql_alchemy_db.session.execute(sql)
-                result = sql_alchemy_db.session.execute("select version from forum_schema_version")
-                db_version = result.scalar()
-                if db_version != next_db_version:
-                    app.logger.error(("Abort! After running migration sql, "
-                                      "the version is {}, "
-                                      "instead of the expected {}."
-                                      ).format(db_version, next_db_version))
-                    return False
-                sql_alchemy_db.session.commit()
-        except FileNotFoundError:
-            break
-    app.logger.info("Database up-to-date.")
-    return True
-
-
 def setup(app: Flask) -> Optional[ForumDatabase]:
     """Connects to the PostgreSQL database and runs migrations if needed,
     returning False on errors."""
@@ -363,7 +321,7 @@ def setup(app: Flask) -> Optional[ForumDatabase]:
     app.config["SQLALCHEMY_DATABASE_URI"] = url
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
     sql_alchemy_db = SQLAlchemy(app)
-    migrations_successful = run_migrations(app, sql_alchemy_db)
+    migrations_successful = migrations.run(app, sql_alchemy_db)
     if not migrations_successful:
         return None
 
