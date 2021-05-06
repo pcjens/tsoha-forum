@@ -13,4 +13,7 @@ app.config["SESSION_COOKIE_SECURE"] = True
 database = forum.database.setup(app)
 if database is None:
     sys.exit(1)
+admin = getenv("ADMIN_USERNAME")
+if admin is not None and len(admin) > 0:
+    database.set_admin(admin)
 forum.routes.setup(app, database)

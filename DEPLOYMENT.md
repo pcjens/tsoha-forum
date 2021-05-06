@@ -2,7 +2,9 @@
 
 Here's guides for running a tsoha-forum server.
 
-## With Heroku
+## Installation
+
+### With Heroku
 
 The repository is configured to work out-of-the-box with Heroku.
 
@@ -18,7 +20,7 @@ The repository is configured to work out-of-the-box with Heroku.
    ```
 4. Deploy!
 
-## Manual setup
+### Manual setup
 
 Requirements: Python 3, pip, and PostgreSQL.
 
@@ -64,3 +66,13 @@ that accepts HTTPS connections in front of this server, to avoid
 leaking sensitive information. Outside of `localhost`, login
 functionality won't even work without a secure reverse proxy, because
 the cookies are restricted to secure connections.
+
+## Administration
+
+Now that you've got the forum running, you presumably want to create
+an admin account. This can be done with the following steps:
+
+1. Create an account normally.
+2. Set the `ADMIN_USERNAME` environment variable to your username.
+3. Restart the server: on startup it assigns the Admin role to whoever
+   is named in the `ADMIN_USERNAME` environment variable.

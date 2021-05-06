@@ -19,6 +19,15 @@ class ForumDatabase:
         self.database = database
         self.markdown_renderer = HTMLRenderer()
 
+    def set_admin(self, username: str) -> None:
+        """Makes the given user an administrator. Used to set admin rights via
+        the ADMIN_USERNAME environment variable."""
+        sql = ("insert into user_roles (role_id, user_id) "
+               "values (1, (select user_id from users where username = :username)) "
+               "on conflict do nothing")
+        self.database.session.execute(sql, { "username": username })
+        self.database.session.commit()
+
     def logged_in(self, user_id: Optional[int]) -> bool:
         """Returns true if the given user id is not None, and is an actual user's user id."""
         if user_id is None:

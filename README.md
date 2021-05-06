@@ -5,8 +5,9 @@
 Written for the database project course (abbreviated *tsoha*) at the
 University of Helsinki.
 
-See [DEPLOYMENT.md](DEPLOYMENT.md) for server installation / setup
-instructions. For general information about the forum, read on.
+See [DEPLOYMENT.md](DEPLOYMENT.md) for server installation / setup, as
+well as administration instructions. For general information about the
+forum, read on.
 
 ## Usage and testing
 
@@ -41,7 +42,9 @@ list of concrete features to be filled out as the project develops:
   - The search uses the correct dictionary for the user's language,
     improving search results for non-English forums.
 - [ ] Administrators can add and remove boards.
-- [ ] Administrators can create secret boards, and specify which users
+- [ ] Users can have roles associated with their profile, assignable
+      by administrators manually.
+- [ ] Administrators can create secret boards, and specify which roles
       can access them.
 
 Technical features / highlights:
@@ -67,26 +70,6 @@ Technical features / highlights:
       The synchronizer tokens are stored in the database, per-session.
 - [x] A strict Content-Security-Policy as a last-ditch effort against
       XSS and similar security issues.
-
-Additional fun features as time allows (I don't necessarily expect to
-do any of these, let alone all of them):
-
-- [ ] Custom CSS for forms, to fix dark mode on systems without dark
-      versions of forms.
-- [ ] Users can upload avatars that will display next to their
-      messages.
-- [ ] Users can have titles associated with their profile, assignable
-      by administrators manually, or based on how many posts they have
-      contributed to the forum.
-- [ ] Users can follow and unfollow boards and topics, which will
-      cause the interface to highlight boards and topics which have
-      messages posted after the user previously visited said board or
-      topic.
-- [ ] Moderation tools for users in a moderator group:
-  - [ ] Ability to remove and modify any user's posts.
-  - [ ] Ability to lock topics.
-  - [ ] Ability to remove avatars.
-  - [ ] Ability to ban users.
 
 ## License
 This server software is distributed under the terms of the [GNU
