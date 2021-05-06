@@ -157,7 +157,14 @@
         <input id="search" type="search" name="q" placeholder="{{ searchstring }}" value="{{ query_string }}">
         <button type="submit">{{ _("Search") }}</button>
       </form>
+
+      {% if is_admin %}
+      <form class="inline-form" action="/admin" method="GET">
+        <button type="submit">{{ _("Admin panel") }}</button>
+      </form>
       {% endif %}
+      {% endif %}
+
     </nav>
 
     <main id="content">

@@ -1,0 +1,134 @@
+{% extends "base.html" %}
+{% block head %}
+<style>
+  summary h3 {
+      display: inline;
+  }
+  .admin-panel {
+      display: grid;
+  }
+  .admin-panel > .tab {
+      grid-row: 1;
+      padding: 10px;
+      text-align: center;
+      cursor: pointer;
+  }
+  .admin-panel > .tabbed-panel {
+      grid-row: 2;
+      grid-column: 1 / span 3;
+  }
+  label > h3 { display: inline; }
+  input[name="selected-tab"] { display: none; }
+
+  .tab {
+      background-color: #EEE;
+      border: 2px solid #EEE;
+  }
+  .tabbed-panel {
+      display: none;
+  }
+
+  input:checked#selected-tab-new-board ~ .tab.new-board,
+  input:checked#selected-tab-new-role ~ .tab.new-role,
+  input:checked#selected-tab-assign-roles ~ .tab.assign-roles {
+      background: none;
+  }
+
+  input:checked#selected-tab-new-board ~ .tabbed-panel.new-board,
+  input:checked#selected-tab-new-role ~ .tabbed-panel.new-role,
+  input:checked#selected-tab-assign-roles ~ .tabbed-panel.assign-roles {
+      display: block;
+      margin: 20px;
+  }
+
+  .admin-panel-form, .role-assignment-form {
+      display: grid;
+      row-gap: 5px;
+      column-gap: 5px;
+      grid-template-columns: 200px 1fr;
+  }
+  .admin-panel-form > label { grid-column: 1; }
+  .admin-panel-form > input { grid-column: 2; margin: auto; margin-left: 0; }
+  .admin-panel-form > textarea { grid-column: 2; }
+  .admin-panel-form > select { grid-column: 2; }
+  .admin-panel-form > button, .role-assignment-form > button {
+      grid-column: 2;
+      width: auto;
+      margin: auto;
+      margin-left: 0px;
+  }
+  .role-assignment-form {
+      grid-template-columns: 1fr 1fr;
+  }
+  .role-assignment-form > label { grid-row: 1; }
+  .role-assignment-form > select { grid-row: 2; }
+  .role-assignment-form > button {
+      grid-column: 1 / span 2;
+      margin-left: auto;
+  }
+</style>
+{% endblock %}
+{% block content %}
+<div class="admin-panel">
+  <input id="selected-tab-new-board" type="radio" name="selected-tab" value="new-board" checked>
+  <label class="tab new-board" for="selected-tab-new-board">
+    <h3>{{ _("Create a board") }}</h3>
+  </label>
+  <div class="tabbed-panel new-board">
+    <form class="admin-panel-form">
+      <label for="new-board-title">{{ _("Title") }}</label>
+      <input id="new-board-title" type="text" name="title" minlength=1>
+      <label for="new-board-description">{{ _("Description") }}</label>
+      <textarea id="new-board-description" name="description"></textarea>
+      <label class="new-board-select-label" for="new-board-roles">
+        {{ _("Permitted roles (leave unselected for all)") }}
+      </label>
+      <select id="new-board-roles" name="roles" multiple>
+        <option>Admin</option>
+        <option>Moderator</option>
+        <option>Accomplished Poster</option>
+      </select>
+      <button type="submit">{{ _("Create") }}</button>
+    </form>
+  </div>
+
+  <input id="selected-tab-new-role" type="radio" name="selected-tab" value="new-role">
+  <label class="tab new-role" for="selected-tab-new-role">
+    <h3>{{ _("Create a role") }}</h3>
+  </label>
+  <div class="tabbed-panel new-role">
+    <form class="admin-panel-form">
+      <label for="role-title">{{ _("Title") }}</label>
+      <input id="role-title" type="text" name="title" minlength=1>
+      <label for="role-scopes">{{ _("Permitted administrative actions") }}</label>
+      <select id="role-scopes" name="scopes" multiple>
+        <option value="create_boards">{{ _("Create boards") }}</option>
+        <option value="create_roles">{{ _("Create roles") }}</option>
+        <option value="assign_roles">{{ _("Assign roles") }}</option>
+      </select>
+      <button type="submit">{{ _("Create") }}</button>
+    </form>
+  </div>
+
+  <input id="selected-tab-assign-roles" type="radio" name="selected-tab" value="assign-roles">
+  <label class="tab assign-roles" for="selected-tab-assign-roles">
+    <h3>{{ _("Assign roles") }}</h3>
+  </label>
+  <div class="tabbed-panel assign-roles">
+    <form class="role-assignment-form">
+      <label for="assigned-roles">{{ _("Assign roles") }}</label>
+      <select id="assigned-roles" name="roles" multiple>
+        <option>Admin</option>
+        <option>Moderator</option>
+        <option>Accomplished Poster</option>
+      </select>
+      <label for="assigned-users">{{ _("For users") }}</label>
+      <select id="assigned-users" name="users" multiple>
+        <option>Alice</option>
+        <option>Bob</option>
+      </select>
+      <button type="submit">{{ _("Assign") }}</button>
+    </form>
+  </div>
+</div>
+{% endblock %}

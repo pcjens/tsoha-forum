@@ -28,6 +28,13 @@ class ForumDatabase:
         self.database.session.execute(sql, { "username": username })
         self.database.session.commit()
 
+    def is_admin(self, user_id: int) -> bool:
+        """Returns True if the given user is an admin."""
+
+        sql = "select count(*) from user_roles where role_id = 1 and user_id = :user_id"
+        is_admin: bool = self.database.session.execute(sql, { "user_id": user_id }).scalar()
+        return is_admin
+
     def logged_in(self, user_id: Optional[int]) -> bool:
         """Returns true if the given user id is not None, and is an actual user's user id."""
         if user_id is None:
