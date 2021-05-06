@@ -75,7 +75,8 @@
     <h3>{{ _("Create a board") }}</h3>
   </label>
   <div class="tabbed-panel new-board">
-    <form class="admin-panel-form">
+    <form class="admin-panel-form" action="/admin/create-board" method="POST">
+      {{ csrf_token_input }}
       <label for="new-board-title">{{ _("Title") }}</label>
       <input id="new-board-title" type="text" name="title" minlength=1 required>
       <label for="new-board-description">{{ _("Description") }}</label>
@@ -84,53 +85,59 @@
         {{ _("Roles that have access (leave unselected for all)") }}
       </label>
       <select id="new-board-roles" name="roles" multiple>
-        <option>Admin</option>
-        <option>Moderator</option>
-        <option>Accomplished Poster</option>
+        {% for role_id, role_name in roles %}
+        <option value="{{ role_id }}">{{ role_name }}</option>
+        {% endfor %}
       </select>
+      <input type="hidden" name="redirect_url" value="{{ current_path }}">
       <button type="submit" {% if not admin_scopes["can_create_boards"] %}disabled{% endif %}>
         {{ _("Create") }}
       </button>
     </form>
   </div>
 
-  <input id="selected-tab-new-role" type="radio" name="selected-tab" value="new-role" checked>
+  <input id="selected-tab-new-role" type="radio" name="selected-tab" value="new-role">
   <label class="tab new-role" for="selected-tab-new-role">
     <h3>{{ _("Create a role") }}</h3>
   </label>
   <div class="tabbed-panel new-role">
-    <form class="admin-panel-form">
+    <form class="admin-panel-form" action="/admin/create-role" method="POST">
+      {{ csrf_token_input }}
       <label for="role-title">{{ _("Title") }}</label>
       <input id="role-title" type="text" name="title" minlength=1 required>
       <label for="role-scopes">{{ _("Permitted administrative actions") }}</label>
       <select id="role-scopes" name="scopes" multiple>
-        <option value="create_boards">{{ _("Create boards") }}</option>
-        <option value="create_roles">{{ _("Create roles") }}</option>
-        <option value="assign_roles">{{ _("Assign roles") }}</option>
+        <option value="can_create_boards">{{ _("Manage boards") }}</option>
+        <option value="can_create_roles">{{ _("Create roles") }}</option>
+        <option value="can_assign_roles">{{ _("Assign roles") }}</option>
       </select>
+      <input type="hidden" name="redirect_url" value="{{ current_path }}">
       <button type="submit" {% if not admin_scopes["can_create_roles"] %}disabled{% endif %}>
         {{ _("Create") }}
       </button>
     </form>
   </div>
 
-  <input id="selected-tab-assign-roles" type="radio" name="selected-tab" value="assign-roles" checked>
+  <input id="selected-tab-assign-roles" type="radio" name="selected-tab" value="assign-roles">
   <label class="tab assign-roles" for="selected-tab-assign-roles">
-    <h3>{{ _("Assign roles") }}</h3>
+    <h3>{{ _("Assign user roles") }}</h3>
   </label>
   <div class="tabbed-panel assign-roles">
-    <form class="role-assignment-form">
-      <label for="assigned-roles">{{ _("Assign roles") }}</label>
+    <form class="role-assignment-form" action="/admin/assign-roles" method="POST">
+      {{ csrf_token_input }}
+      <label for="assigned-roles">{{ _("Assign additional roles") }}</label>
       <select id="assigned-roles" name="roles" multiple required>
-        <option>Admin</option>
-        <option>Moderator</option>
-        <option>Accomplished Poster</option>
+        {% for role_id, role_name in roles %}
+        <option value="{{ role_id }}">{{ role_name }}</option>
+        {% endfor %}
       </select>
       <label for="assigned-users">{{ _("For users") }}</label>
       <select id="assigned-users" name="users" multiple required>
-        <option>Alice</option>
-        <option>Bob</option>
+        {% for user_id, username in users %}
+        <option value="{{ user_id }}">{{ username }}</option>
+        {% endfor %}
       </select>
+      <input type="hidden" name="redirect_url" value="{{ current_path }}">
       <button type="submit" {% if not admin_scopes["can_assign_roles"] %}disabled{% endif %}>
         {{ _("Assign") }}
       </button>

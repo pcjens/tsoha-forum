@@ -63,11 +63,13 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         logged_in_user = None
         csrf_token = None
         admin_scopes = None
+        board_access = set()
         if "user_id" in session:
             user_id = session["user_id"]
             logged_in_user = database.get_username(user_id)
             csrf_token = database.get_csrf_token(user_id)
             admin_scopes = database.get_admin_scopes(user_id)
+            board_access = database.get_board_access(user_id)
         variables.update({
             "lang": lang,
             "languages": list(jinja_envs),
@@ -75,6 +77,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             "current_path": request.full_path,
             "logged_in_user": logged_in_user,
             "admin_scopes": admin_scopes,
+            "accessible_boards": board_access,
             "csrf_token": csrf_token
         })
         return template.render(variables)
@@ -153,7 +156,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @admin_required
     @templated("admin.html")
     def admin() -> Any:
-        return {}
+        return { "roles": database.get_roles(), "users": database.get_users() }
 
     @app.route("/board/<int:board_id>")
     @login_required
@@ -161,6 +164,8 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     def board(board_id: int) -> Any:
         board_name = database.get_board_name(board_id)
         if board_name is None:
+            return { "error_code": 404 }
+        if board_id not in database.get_board_access(session["user_id"]):
             return { "error_code": 404 }
         return {
             "board_id": board_id,
@@ -172,6 +177,8 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @login_required
     @templated("topic.html")
     def topic(board_id: int, topic_id: int) -> Any:
+        if board_id not in database.get_board_access(session["user_id"]):
+            return { "error_code": 404 }
         posts = database.get_posts(topic_id, session["user_id"])
         if len(posts) == 0:
             return { "error_code": 404 }
@@ -223,6 +230,8 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @csrf_token_required
     @login_required
     def new_topic(board_id: int) -> Any:
+        if board_id not in database.get_board_access(session["user_id"]):
+            return redirect(request.form["redirect_url"])
         title = request.form["title"]
         content = request.form["content"]
         topic_id = database.create_topic(board_id, session["user_id"], title, content)
@@ -234,6 +243,8 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @csrf_token_required
     @login_required
     def new_post(board_id: int, topic_id: int) -> Any:
+        if board_id not in database.get_board_access(session["user_id"]):
+            return redirect(request.form["redirect_url"])
         title = request.form["title"]
         content = request.form["content"]
         post_id = database.create_post(topic_id, session["user_id"], title, content)
@@ -245,20 +256,26 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @csrf_token_required
     @login_required
     def edit_post(board_id: int, topic_id: int, post_id: int) -> Any:
+        redirect_url = "/board/{}/topic/{}#{}".format(board_id, topic_id, post_id)
+        if board_id not in database.get_board_access(session["user_id"]):
+            return redirect(redirect_url)
         if "confirm_edit" not in request.form:
-            return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
+            return redirect(redirect_url)
         title = request.form["title"]
         content = request.form["content"]
         database.edit_post(post_id, session["user_id"], title, content)
-        return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
+        return redirect(redirect_url)
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>/delete/<int:post_id>",
                methods = ["POST"])
     @csrf_token_required
     @login_required
     def delete_post(board_id: int, topic_id: int, post_id: int) -> Any:
+        err_redirect_url = "/board/{}/topic/{}#{}".format(board_id, topic_id, post_id)
+        if board_id not in database.get_board_access(session["user_id"]):
+            return redirect(err_redirect_url)
         if "confirm_deletion" not in request.form:
-            return redirect("/board/{}/topic/{}#{}".format(board_id, topic_id, post_id))
+            return redirect(err_redirect_url)
         database.delete_post(post_id, session["user_id"])
         posts_after = database.get_posts(topic_id, session["user_id"])
         if len(posts_after) > 0:
@@ -281,3 +298,45 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
             "query_string": query_string,
             "posts": database.search_posts(search_language, query_string)
         }
+
+    @app.route("/admin/create-board", methods = ["POST"])
+    @csrf_token_required
+    @admin_required
+    def admin_create_board() -> Any:
+        admin_scopes = database.get_admin_scopes(session["user_id"])
+        assert admin_scopes is not None # Because of @admin_required
+        if not admin_scopes["can_create_boards"]:
+            return fill_and_render_template("error-403.html", {}), 403
+        title = request.form["title"]
+        description = request.form["description"]
+        roles = request.form.getlist("roles")
+        board_id = database.create_board(title, description, roles)
+        if board_id is None:
+            return redirect(request.form["redirect_url"])
+        return redirect("/board/{}".format(board_id))
+
+    @app.route("/admin/create-role", methods = ["POST"])
+    @csrf_token_required
+    @admin_required
+    def admin_create_role() -> Any:
+        admin_scopes = database.get_admin_scopes(session["user_id"])
+        assert admin_scopes is not None # Because of @admin_required
+        if not admin_scopes["can_create_roles"]:
+            return fill_and_render_template("error-403.html", {}), 403
+        title = request.form["title"]
+        scopes = request.form.getlist("scopes")
+        database.create_role(title, scopes)
+        return redirect(request.form["redirect_url"])
+
+    @app.route("/admin/assign-roles", methods = ["POST"])
+    @csrf_token_required
+    @admin_required
+    def admin_assign_roles() -> Any:
+        admin_scopes = database.get_admin_scopes(session["user_id"])
+        assert admin_scopes is not None # Because of @admin_required
+        if not admin_scopes["can_assign_roles"]:
+            return fill_and_render_template("error-403.html", {}), 403
+        roles = request.form.getlist("roles")
+        users = request.form.getlist("users")
+        database.assign_roles(roles, users)
+        return redirect(request.form["redirect_url"])

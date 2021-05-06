@@ -42,6 +42,7 @@
   <strong class="board-posts">{{ _("Posts") }}</strong>
   <strong class="board-latest-posts">{{ _("Latest post") }}</strong>
   {% for id, title, desc, topics, posts, last_topic_id, last_post_id, last_title, last_time in boards %}
+  {% if id in accessible_boards %}
   <article class="board-description">
     <a href="/board/{{ id }}" ><strong>{{ title }}</strong></a>
     <aside>{{ desc }}</aside>
@@ -56,6 +57,7 @@
     <time datetime="{{ last_time }}">{{ last_time.strftime("%Y-%m-%d %H:%M:%S") }}</time>
     {% endif %}
   </aside>
+  {% endif %}
   {% endfor %}
 </div>
 {% endblock %}

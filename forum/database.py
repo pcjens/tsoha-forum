@@ -1,6 +1,6 @@
 """Database access and maintenance functionality."""
 
-from typing import Any, Optional, Callable, cast, List, Dict
+from typing import Any, Optional, Callable, cast, List, Dict, Set
 from os import getenv
 from datetime import datetime
 import secrets
@@ -12,7 +12,7 @@ import bleach
 from forum.validation import is_valid_title, is_valid_post_content
 from forum import migrations
 
-class ForumDatabase:
+class ForumDatabase: # pylint: disable = R0904
     """Holder of database access, provider of persistent data."""
 
     def __init__(self, database: Any) -> None:
@@ -43,7 +43,6 @@ class ForumDatabase:
             "can_create_roles": result[1],
             "can_assign_roles": result[2],
         }
-        print(scopes)
         return scopes
 
     def logged_in(self, user_id: Optional[int]) -> bool:
@@ -222,6 +221,69 @@ class ForumDatabase:
         self.database.session.commit()
         return topic_id
 
+    def create_board(self, title: str, description: str, roles: List[str]) -> int:
+        """Creates a new board with the given title, description and roles."""
+
+        sql = ("insert into boards (title, description) values (:title, :description) "
+               "returning board_id")
+        board_id: int = self.database.session.execute(sql, {
+            "title": title,
+            "description": description
+        }).scalar()
+
+        board_role_tuples = []
+        for role_id in roles:
+            board_role_tuples.append({ "board_id": board_id, "role_id": role_id })
+        sql = "insert into board_roles (board_id, role_id) values (:board_id, :role_id)"
+        self.database.session.execute(sql, board_role_tuples)
+        self.database.session.commit()
+
+        return board_id
+
+    def create_role(self, title: str, scopes: List[str]) -> int:
+        """Creates a new role with the given title and scopes."""
+
+        sql = ("insert into roles "
+               "(role_name, can_create_boards, can_create_roles, can_assign_roles) values "
+               "(:title, :can_create_boards, :can_create_roles, :can_assign_roles) "
+               "returning role_id")
+        role_id: int = self.database.session.execute(sql, {
+            "title": title,
+            "can_create_boards": "can_create_boards" in scopes,
+            "can_create_roles": "can_create_roles" in scopes,
+            "can_assign_roles": "can_assign_roles" in scopes
+        }).scalar()
+        self.database.session.commit()
+        return role_id
+
+    def assign_roles(self, roles: List[str], users: List[str]) -> None:
+        """Adds the roles to the users. All roles to every user."""
+
+        role_user_tuples = []
+        for role_id in roles:
+            for user_id in users:
+                role_user_tuples.append({ "role_id": role_id, "user_id": user_id })
+        sql = "insert into user_roles (role_id, user_id) values (:role_id, :user_id)"
+        self.database.session.execute(sql, role_user_tuples)
+        self.database.session.commit()
+
+    def get_board_access(self, user_id: int) -> Set[int]:
+        """Returns a set containing all ids of the boards the user can access."""
+
+        sql = "select role_id from user_roles where user_id = :user_id"
+        result = self.database.session.execute(sql, { "user_id": user_id }).fetchall()
+        user_roles = set()
+        for row in result:
+            user_roles.add(int(row[0]))
+
+        sql = "select board_id, role_id from boards left join board_roles using (board_id)"
+        result = self.database.session.execute(sql).fetchall()
+        board_roles: Set[int] = set()
+        for row in result:
+            if row[1] is None or int(row[1]) in user_roles:
+                board_roles.add(int(row[0]))
+        return board_roles
+
     def get_boards(self) -> List[Any]:
         """Returns a list of boards with the relevant information for index.html's listing."""
 
@@ -298,6 +360,18 @@ class ForumDatabase:
             posts.append((post_id, username, title, title_original, content, content_original,
                           creation_time, edit_time, owned))
         return posts
+
+    def get_users(self) -> List[Any]:
+        """Returns a list of all the user id's and their associated usernames."""
+        sql = "select user_id, username from users"
+        users: List[Any] = self.database.session.execute(sql).fetchall()
+        return users
+
+    def get_roles(self) -> List[Any]:
+        """Returns a list of all the role id's and their associated names."""
+        sql = "select role_id, role_name from roles"
+        roles: List[Any] = self.database.session.execute(sql).fetchall()
+        return roles
 
     def search_posts(self, dictionary: str, search_string: str) -> List[Any]:
         """Returns a list of posts related to the given search string."""
