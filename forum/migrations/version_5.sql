@@ -19,6 +19,7 @@ insert into roles (
     TRUE,
     TRUE
 );
+select setval('roles_role_id_seq', 1);
 
 create table user_roles (
     user_id serial references users(user_id),

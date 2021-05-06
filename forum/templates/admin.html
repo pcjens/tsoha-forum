@@ -45,7 +45,7 @@
       display: grid;
       row-gap: 5px;
       column-gap: 5px;
-      grid-template-columns: 200px 1fr;
+      grid-template-columns: 160px 1fr;
   }
   .admin-panel-form > label { grid-column: 1; }
   .admin-panel-form > input { grid-column: 2; margin: auto; margin-left: 0; }
@@ -77,57 +77,63 @@
   <div class="tabbed-panel new-board">
     <form class="admin-panel-form">
       <label for="new-board-title">{{ _("Title") }}</label>
-      <input id="new-board-title" type="text" name="title" minlength=1>
+      <input id="new-board-title" type="text" name="title" minlength=1 required>
       <label for="new-board-description">{{ _("Description") }}</label>
-      <textarea id="new-board-description" name="description"></textarea>
+      <textarea id="new-board-description" name="description" required></textarea>
       <label class="new-board-select-label" for="new-board-roles">
-        {{ _("Permitted roles (leave unselected for all)") }}
+        {{ _("Roles that have access (leave unselected for all)") }}
       </label>
       <select id="new-board-roles" name="roles" multiple>
         <option>Admin</option>
         <option>Moderator</option>
         <option>Accomplished Poster</option>
       </select>
-      <button type="submit">{{ _("Create") }}</button>
+      <button type="submit" {% if not admin_scopes["can_create_boards"] %}disabled{% endif %}>
+        {{ _("Create") }}
+      </button>
     </form>
   </div>
 
-  <input id="selected-tab-new-role" type="radio" name="selected-tab" value="new-role">
+  <input id="selected-tab-new-role" type="radio" name="selected-tab" value="new-role" checked>
   <label class="tab new-role" for="selected-tab-new-role">
     <h3>{{ _("Create a role") }}</h3>
   </label>
   <div class="tabbed-panel new-role">
     <form class="admin-panel-form">
       <label for="role-title">{{ _("Title") }}</label>
-      <input id="role-title" type="text" name="title" minlength=1>
+      <input id="role-title" type="text" name="title" minlength=1 required>
       <label for="role-scopes">{{ _("Permitted administrative actions") }}</label>
       <select id="role-scopes" name="scopes" multiple>
         <option value="create_boards">{{ _("Create boards") }}</option>
         <option value="create_roles">{{ _("Create roles") }}</option>
         <option value="assign_roles">{{ _("Assign roles") }}</option>
       </select>
-      <button type="submit">{{ _("Create") }}</button>
+      <button type="submit" {% if not admin_scopes["can_create_roles"] %}disabled{% endif %}>
+        {{ _("Create") }}
+      </button>
     </form>
   </div>
 
-  <input id="selected-tab-assign-roles" type="radio" name="selected-tab" value="assign-roles">
+  <input id="selected-tab-assign-roles" type="radio" name="selected-tab" value="assign-roles" checked>
   <label class="tab assign-roles" for="selected-tab-assign-roles">
     <h3>{{ _("Assign roles") }}</h3>
   </label>
   <div class="tabbed-panel assign-roles">
     <form class="role-assignment-form">
       <label for="assigned-roles">{{ _("Assign roles") }}</label>
-      <select id="assigned-roles" name="roles" multiple>
+      <select id="assigned-roles" name="roles" multiple required>
         <option>Admin</option>
         <option>Moderator</option>
         <option>Accomplished Poster</option>
       </select>
       <label for="assigned-users">{{ _("For users") }}</label>
-      <select id="assigned-users" name="users" multiple>
+      <select id="assigned-users" name="users" multiple required>
         <option>Alice</option>
         <option>Bob</option>
       </select>
-      <button type="submit">{{ _("Assign") }}</button>
+      <button type="submit" {% if not admin_scopes["can_assign_roles"] %}disabled{% endif %}>
+        {{ _("Assign") }}
+      </button>
     </form>
   </div>
 </div>

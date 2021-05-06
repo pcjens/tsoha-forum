@@ -158,7 +158,7 @@
         <button type="submit">{{ _("Search") }}</button>
       </form>
 
-      {% if is_admin %}
+      {% if admin_scopes is not none %}
       <form class="inline-form" action="/admin" method="GET">
         <button type="submit">{{ _("Admin panel") }}</button>
       </form>

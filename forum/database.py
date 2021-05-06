@@ -1,6 +1,6 @@
 """Database access and maintenance functionality."""
 
-from typing import Any, Optional, Callable, cast, List
+from typing import Any, Optional, Callable, cast, List, Dict
 from os import getenv
 from datetime import datetime
 import secrets
@@ -28,12 +28,23 @@ class ForumDatabase:
         self.database.session.execute(sql, { "username": username })
         self.database.session.commit()
 
-    def is_admin(self, user_id: int) -> bool:
-        """Returns True if the given user is an admin."""
+    def get_admin_scopes(self, user_id: int) -> Optional[Dict[str, bool]]:
+        """Returns administration scopes for the given user."""
 
-        sql = "select count(*) from user_roles where role_id = 1 and user_id = :user_id"
-        is_admin: bool = self.database.session.execute(sql, { "user_id": user_id }).scalar()
-        return is_admin
+        sql = ("select bool_or(can_create_boards), "
+               "bool_or(can_create_roles), "
+               "bool_or(can_assign_roles) "
+               "from user_roles join roles using (role_id) where user_id = :user_id")
+        result = self.database.session.execute(sql, { "user_id": user_id }).first()
+        if result is None or True not in result:
+            return None
+        scopes = {
+            "can_create_boards": result[0],
+            "can_create_roles": result[1],
+            "can_assign_roles": result[2],
+        }
+        print(scopes)
+        return scopes
 
     def logged_in(self, user_id: Optional[int]) -> bool:
         """Returns true if the given user id is not None, and is an actual user's user id."""

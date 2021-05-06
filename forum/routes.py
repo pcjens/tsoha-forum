@@ -62,19 +62,19 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         template = jinja_env.get_template(template_path)
         logged_in_user = None
         csrf_token = None
-        is_admin = False
+        admin_scopes = None
         if "user_id" in session:
             user_id = session["user_id"]
             logged_in_user = database.get_username(user_id)
             csrf_token = database.get_csrf_token(user_id)
-            is_admin = database.is_admin(user_id)
+            admin_scopes = database.get_admin_scopes(user_id)
         variables.update({
             "lang": lang,
             "languages": list(jinja_envs),
             "current_language": session.get("lang", default_lang),
             "current_path": request.full_path,
             "logged_in_user": logged_in_user,
-            "is_admin": is_admin,
+            "admin_scopes": admin_scopes,
             "csrf_token": csrf_token
         })
         return template.render(variables)
@@ -84,7 +84,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         def decorated_function(*args: Any, **kwargs: Any) -> Any:
             if not database.logged_in(session.get("user_id")):
                 return fill_and_render_template("login.html", {}), 401
-            if not database.is_admin(session["user_id"]):
+            if database.get_admin_scopes(session["user_id"]) is None:
                 return fill_and_render_template("error-403.html", {}), 403
             return route(*args, **kwargs)
         return decorated_function
