@@ -30,12 +30,14 @@ Run the following to install the prerequisites onto your machine:
 python -m venv venv
 source venv/bin/activate
 pip install -r requirements.txt
-# or: pip install flask flask-sqlalchemy jinja2 mypy pylint psycopg2-binary gunicorn python-dotenv
+# or: pip install flask flask-sqlalchemy jinja2 mypy pylint psycopg2-binary gunicorn python-dotenv mistletoe bleach
 cp .env.sample .env
 ```
 
 Configure `.env` to fit your system and needs. The user and database
 specified in `DATABASE_URL` should exist before running the server.
+A good value for `SECRET_KEY` can be generated with `openssl rand
+-hex 20`.
 
 Example: say your username is `foo`. Set DATABASE_URL to
 `postgresql://foo@localhost/tsohadb`, and then create the role
