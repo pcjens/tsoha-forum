@@ -6,7 +6,7 @@ msgstr "Content-Type: text/plain; charset=UTF-8\n"
 #: ../forum/templates/base.html:72 ../forum/templates/base.html:77
 #: ../forum/templates/base.html:86 ../forum/templates/base.html:105
 #: ../forum/templates/base.html:123 ../forum/templates/base.html:128
-#: ../forum/templates/base.html:132
+#: ../forum/templates/base.html:132 ../forum/templates/base.html:131
 msgid "Forum"
 msgstr "Foorumi"
 
@@ -14,6 +14,7 @@ msgstr "Foorumi"
 #: ../forum/templates/base.html:73 ../forum/templates/base.html:82
 #: ../forum/templates/base.html:101 ../forum/templates/base.html:135
 #: ../forum/templates/base.html:140 ../forum/templates/base.html:144
+#: ../forum/templates/base.html:143
 msgid "Change language"
 msgstr "Vaihda kieltä"
 
@@ -53,7 +54,7 @@ msgstr "Vahvista salasana"
 #: ../forum/templates/base.html:77 ../forum/templates/base.html:82
 #: ../forum/templates/base.html:91 ../forum/templates/base.html:110
 #: ../forum/templates/base.html:141 ../forum/templates/base.html:146
-#: ../forum/templates/base.html:150
+#: ../forum/templates/base.html:150 ../forum/templates/base.html:149
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr "Kirjautuneena käyttäjälle %(username)s."
@@ -61,7 +62,7 @@ msgstr "Kirjautuneena käyttäjälle %(username)s."
 #: ../forum/templates/base.html:81 ../forum/templates/base.html:86
 #: ../forum/templates/base.html:95 ../forum/templates/base.html:114
 #: ../forum/templates/base.html:143 ../forum/templates/base.html:148
-#: ../forum/templates/base.html:152
+#: ../forum/templates/base.html:152 ../forum/templates/base.html:151
 msgid "Logout"
 msgstr "Kirjaudu ulos"
 
@@ -100,6 +101,7 @@ msgstr "Viestejä"
 #: ../forum/templates/base.html:105 ../forum/templates/base.html:124
 #: ../forum/templates/base.html:158 ../forum/templates/base.html:159
 #: ../forum/templates/base.html:164 ../forum/templates/base.html:168
+#: ../forum/templates/base.html:174
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
@@ -110,6 +112,7 @@ msgstr ""
 
 #: ../forum/templates/board.html:49 ../forum/templates/board.html:51
 #: ../forum/templates/board.html:60 ../forum/templates/board.html:57
+#: ../forum/templates/board.html:100
 msgid "Create a new topic"
 msgstr "Luo uusi aihe"
 
@@ -117,7 +120,10 @@ msgstr "Luo uusi aihe"
 #: ../forum/templates/topic.html:96 ../forum/templates/board.html:63
 #: ../forum/templates/topic.html:79 ../forum/templates/board.html:60
 #: ../forum/templates/topic.html:101 ../forum/templates/topic.html:80
-#: ../forum/templates/topic.html:102
+#: ../forum/templates/topic.html:102 ../forum/templates/admin.html:80
+#: ../forum/templates/admin.html:106 ../forum/templates/board.html:61
+#: ../forum/templates/board.html:103 ../forum/templates/topic.html:84
+#: ../forum/templates/topic.html:106
 msgid "Title"
 msgstr "Otsikko"
 
@@ -125,27 +131,33 @@ msgstr "Otsikko"
 #: ../forum/templates/topic.html:99 ../forum/templates/board.html:66
 #: ../forum/templates/topic.html:82 ../forum/templates/board.html:63
 #: ../forum/templates/topic.html:104 ../forum/templates/topic.html:83
-#: ../forum/templates/topic.html:105
+#: ../forum/templates/topic.html:105 ../forum/templates/board.html:106
+#: ../forum/templates/topic.html:87 ../forum/templates/topic.html:109
 msgid "Message"
 msgstr "Viesti"
 
 #: ../forum/templates/board.html:59 ../forum/templates/board.html:61
 #: ../forum/templates/board.html:70 ../forum/templates/board.html:67
+#: ../forum/templates/admin.html:94 ../forum/templates/admin.html:116
+#: ../forum/templates/board.html:110
 msgid "Create"
 msgstr "Luo"
 
 #: ../forum/templates/board.html:64 ../forum/templates/board.html:66
 #: ../forum/templates/board.html:75 ../forum/templates/board.html:72
+#: ../forum/templates/board.html:115
 msgid "Topic"
 msgstr "Aihe"
 
 #: ../forum/templates/board.html:65 ../forum/templates/board.html:67
 #: ../forum/templates/board.html:76 ../forum/templates/board.html:73
+#: ../forum/templates/board.html:116
 msgid "Replies"
 msgstr "Vastauksia"
 
 #: ../forum/templates/board.html:69 ../forum/templates/board.html:71
 #: ../forum/templates/board.html:81 ../forum/templates/board.html:78
+#: ../forum/templates/board.html:121
 #, python-format
 msgid "Conversation started by %(author)s"
 msgstr "Keskustelun aloitti %(author)s"
@@ -169,26 +181,30 @@ msgstr "Palvelin törmäsi odottamattomaan virheeseen käsitellessään pyyntö�
 #: ../forum/templates/topic.html:87 ../forum/templates/topic.html:64
 #: ../forum/templates/topic.html:69 ../forum/templates/topic.html:65
 #: ../forum/templates/topic.html:72 ../forum/templates/topic.html:73
+#: ../forum/templates/board.html:94 ../forum/templates/topic.html:77
 msgid "Delete"
 msgstr "Poista"
 
 #: ../forum/templates/topic.html:94 ../forum/templates/topic.html:77
 #: ../forum/templates/topic.html:99 ../forum/templates/topic.html:100
+#: ../forum/templates/topic.html:104
 msgid "Reply to this topic"
 msgstr "Vastaa tähän keskusteluun"
 
 #: ../forum/templates/topic.html:103 ../forum/templates/topic.html:86
 #: ../forum/templates/topic.html:108 ../forum/templates/topic.html:109
+#: ../forum/templates/topic.html:113
 msgid "Reply"
 msgstr "Vastaa"
 
 #: ../forum/templates/base.html:148 ../forum/templates/base.html:149
 #: ../forum/templates/base.html:154 ../forum/templates/base.html:158
+#: ../forum/templates/base.html:157
 msgid "Search"
 msgstr "Hae"
 
 #: ../forum/templates/board.html:77 ../forum/templates/index.html:43
-#: ../forum/templates/board.html:74
+#: ../forum/templates/board.html:74 ../forum/templates/board.html:117
 msgid "Latest post"
 msgstr "Uusin viesti"
 
@@ -209,31 +225,35 @@ msgstr ""
 "yleisimmän salasanan listalta."
 
 #: ../forum/templates/topic.html:67 ../forum/templates/topic.html:69
-#: ../forum/templates/topic.html:70
+#: ../forum/templates/topic.html:70 ../forum/templates/topic.html:74
 msgid "Yes, I really want to delete this post."
 msgstr "Kyllä, haluan poistaa tämän viestin."
 
 #: ../forum/routes.py:219 ../forum/routes.py:229 ../forum/routes.py:245
+#: ../forum/routes.py:307
 msgid "postgres-search-dictionary"
 msgstr "finnish"
 
 #: ../forum/templates/base.html:147 ../forum/templates/base.html:152
-#: ../forum/templates/base.html:156
+#: ../forum/templates/base.html:156 ../forum/templates/base.html:155
 msgid "Search for posts"
 msgstr "Hae viesteistä"
 
 #: ../forum/templates/topic.html:54 ../forum/templates/search.html:21
-#: ../forum/templates/topic.html:60
+#: ../forum/templates/topic.html:60 ../forum/templates/topic.html:64
 #, python-format
 msgid "Edited at: %(datetime)s"
 msgstr "Muokattu: %(datetime)s"
 
 #: ../forum/templates/topic.html:76 ../forum/templates/topic.html:91
 #: ../forum/templates/topic.html:77 ../forum/templates/topic.html:92
+#: ../forum/templates/board.html:81 ../forum/templates/topic.html:81
+#: ../forum/templates/topic.html:96
 msgid "Edit"
 msgstr "Muokkaa"
 
 #: ../forum/templates/topic.html:87 ../forum/templates/topic.html:88
+#: ../forum/templates/topic.html:92
 msgid "Yes, I really want to edit this post."
 msgstr "Kyllä, haluan muokata tätä viestiä."
 
@@ -252,3 +272,80 @@ msgid ""
 msgstr ""
 "Tämä pyyntö on keskeytetty käyttäjätilisi rajoituksien takia. "
 "Uudelleenkirjautuminen voi auttaa."
+
+#: ../forum/templates/admin.html:75
+msgid "Create a board"
+msgstr "Luo keskustelualue"
+
+#: ../forum/templates/admin.html:82 ../forum/templates/board.html:63
+msgid "Description"
+msgstr "Kuvaus"
+
+#: ../forum/templates/admin.html:85
+msgid "Roles that have access (leave unselected for all)"
+msgstr "Roolit joilla on pääsylupa (jätä tyhjäksi vapaata pääsyä varten)"
+
+#: ../forum/templates/admin.html:101
+msgid "Create a role"
+msgstr "Luo rooli"
+
+#: ../forum/templates/admin.html:108
+msgid "Permitted administrative actions"
+msgstr "Sallitut ylläpitotoiminnot"
+
+#: ../forum/templates/admin.html:110
+msgid "Manage boards"
+msgstr "Hallitse keskustelualueita"
+
+#: ../forum/templates/admin.html:111
+msgid "Create roles"
+msgstr "Luo rooleja"
+
+#: ../forum/templates/admin.html:112
+msgid "Assign roles"
+msgstr "Aseta rooleja"
+
+#: ../forum/templates/admin.html:123
+msgid "Assign user roles"
+msgstr "Aseta rooleja käyttäjille"
+
+#: ../forum/templates/admin.html:128
+msgid "Assign additional roles"
+msgstr "Aseta lisärooleja"
+
+#: ../forum/templates/admin.html:134
+msgid "For users"
+msgstr "Käyttäjille"
+
+#: ../forum/templates/admin.html:142
+msgid "Assign"
+msgstr "Aseta"
+
+#: ../forum/templates/base.html:162
+msgid "Admin panel"
+msgstr "Ylläpitopaneeli"
+
+#: ../forum/templates/board.html:58
+msgid "Admin: Edit board"
+msgstr "Ylläpito: Muokkaa keskustelualuetta"
+
+#: ../forum/templates/board.html:66
+msgid "Roles for access"
+msgstr "Roolit joilla on pääsylupa"
+
+#: ../forum/templates/board.html:77
+msgid "Yes, I really want to edit this board."
+msgstr "Kyllä, haluan muokata tätä keskustelualuetta."
+
+#: ../forum/templates/board.html:86
+msgid "Admin: Delete board"
+msgstr "Ylläpito: Poista keskustelualue"
+
+#: ../forum/templates/board.html:91
+#, python-format
+msgid ""
+"Yes, I really want to delete this entire board. I understand that %(board)s "
+"will no longer exist afterwards."
+msgstr ""
+"Kyllä, haluan todella poistaa tämän koko keskustelualueen. Ymmärrän, että "
+"%(board)s ei ole enää saatavilla tämän jälkeen."

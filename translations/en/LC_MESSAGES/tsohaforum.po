@@ -3,37 +3,41 @@ msgid ""
 msgstr "Content-Type: text/plain; charset=UTF-8\n"
 
 #: ../forum/routes.py:219 ../forum/routes.py:229 ../forum/routes.py:245
+#: ../forum/routes.py:307
 msgid "postgres-search-dictionary"
 msgstr "english"
 
 #: ../forum/templates/base.html:6 ../forum/templates/base.html:123
 #: ../forum/templates/base.html:128 ../forum/templates/base.html:132
+#: ../forum/templates/base.html:131
 msgid "Forum"
 msgstr "Forum"
 
 #: ../forum/templates/base.html:135 ../forum/templates/base.html:140
-#: ../forum/templates/base.html:144
+#: ../forum/templates/base.html:144 ../forum/templates/base.html:143
 msgid "Change language"
 msgstr "Change language"
 
 #: ../forum/templates/base.html:141 ../forum/templates/base.html:146
-#: ../forum/templates/base.html:150
+#: ../forum/templates/base.html:150 ../forum/templates/base.html:149
 #, python-format
 msgid "Logged in as %(username)s."
 msgstr "Logged in as %(username)s."
 
 #: ../forum/templates/base.html:143 ../forum/templates/base.html:148
-#: ../forum/templates/base.html:152
+#: ../forum/templates/base.html:152 ../forum/templates/base.html:151
 msgid "Logout"
 msgstr "Logout"
 
 #: ../forum/templates/base.html:148 ../forum/templates/base.html:149
 #: ../forum/templates/base.html:154 ../forum/templates/base.html:158
+#: ../forum/templates/base.html:157
 msgid "Search"
 msgstr "Search"
 
 #: ../forum/templates/base.html:158 ../forum/templates/base.html:159
 #: ../forum/templates/base.html:164 ../forum/templates/base.html:168
+#: ../forum/templates/base.html:174
 msgid ""
 "Powered by tsoha-forum, a forum server written for the database course at "
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
@@ -42,39 +46,50 @@ msgstr ""
 "the University of Helsinki, distributed under the GNU AGPLv3 license."
 
 #: ../forum/templates/board.html:60 ../forum/templates/board.html:57
+#: ../forum/templates/board.html:100
 msgid "Create a new topic"
 msgstr "Create a new topic"
 
 #: ../forum/templates/board.html:63 ../forum/templates/topic.html:79
 #: ../forum/templates/board.html:60 ../forum/templates/topic.html:101
 #: ../forum/templates/topic.html:80 ../forum/templates/topic.html:102
+#: ../forum/templates/admin.html:80 ../forum/templates/admin.html:106
+#: ../forum/templates/board.html:61 ../forum/templates/board.html:103
+#: ../forum/templates/topic.html:84 ../forum/templates/topic.html:106
 msgid "Title"
 msgstr "Title"
 
 #: ../forum/templates/board.html:66 ../forum/templates/topic.html:82
 #: ../forum/templates/board.html:63 ../forum/templates/topic.html:104
 #: ../forum/templates/topic.html:83 ../forum/templates/topic.html:105
+#: ../forum/templates/board.html:106 ../forum/templates/topic.html:87
+#: ../forum/templates/topic.html:109
 msgid "Message"
 msgstr "Message"
 
 #: ../forum/templates/board.html:70 ../forum/templates/board.html:67
+#: ../forum/templates/admin.html:94 ../forum/templates/admin.html:116
+#: ../forum/templates/board.html:110
 msgid "Create"
 msgstr "Create"
 
 #: ../forum/templates/board.html:75 ../forum/templates/board.html:72
+#: ../forum/templates/board.html:115
 msgid "Topic"
 msgstr "Topic"
 
 #: ../forum/templates/board.html:76 ../forum/templates/board.html:73
+#: ../forum/templates/board.html:116
 msgid "Replies"
 msgstr "Replies"
 
 #: ../forum/templates/board.html:77 ../forum/templates/index.html:43
-#: ../forum/templates/board.html:74
+#: ../forum/templates/board.html:74 ../forum/templates/board.html:117
 msgid "Latest post"
 msgstr "Latest post"
 
 #: ../forum/templates/board.html:81 ../forum/templates/board.html:78
+#: ../forum/templates/board.html:121
 #, python-format
 msgid "Conversation started by %(author)s"
 msgstr "Conversation started by %(author)s"
@@ -162,42 +177,46 @@ msgstr "Confirm password"
 
 #: ../forum/templates/topic.html:64 ../forum/templates/topic.html:69
 #: ../forum/templates/topic.html:65 ../forum/templates/topic.html:72
-#: ../forum/templates/topic.html:73
+#: ../forum/templates/topic.html:73 ../forum/templates/board.html:94
+#: ../forum/templates/topic.html:77
 msgid "Delete"
 msgstr "Delete"
 
 #: ../forum/templates/topic.html:67 ../forum/templates/topic.html:69
-#: ../forum/templates/topic.html:70
+#: ../forum/templates/topic.html:70 ../forum/templates/topic.html:74
 msgid "Yes, I really want to delete this post."
 msgstr "Yes, I really want to delete this post."
 
 #: ../forum/templates/topic.html:77 ../forum/templates/topic.html:99
-#: ../forum/templates/topic.html:100
+#: ../forum/templates/topic.html:100 ../forum/templates/topic.html:104
 msgid "Reply to this topic"
 msgstr "Reply to this topic"
 
 #: ../forum/templates/topic.html:86 ../forum/templates/topic.html:108
-#: ../forum/templates/topic.html:109
+#: ../forum/templates/topic.html:109 ../forum/templates/topic.html:113
 msgid "Reply"
 msgstr "Reply"
 
 #: ../forum/templates/base.html:147 ../forum/templates/base.html:152
-#: ../forum/templates/base.html:156
+#: ../forum/templates/base.html:156 ../forum/templates/base.html:155
 msgid "Search for posts"
 msgstr ""
 
 #: ../forum/templates/topic.html:54 ../forum/templates/search.html:21
-#: ../forum/templates/topic.html:60
+#: ../forum/templates/topic.html:60 ../forum/templates/topic.html:64
 #, python-format
 msgid "Edited at: %(datetime)s"
 msgstr ""
 
 #: ../forum/templates/topic.html:76 ../forum/templates/topic.html:91
 #: ../forum/templates/topic.html:77 ../forum/templates/topic.html:92
+#: ../forum/templates/board.html:81 ../forum/templates/topic.html:81
+#: ../forum/templates/topic.html:96
 msgid "Edit"
 msgstr ""
 
 #: ../forum/templates/topic.html:87 ../forum/templates/topic.html:88
+#: ../forum/templates/topic.html:92
 msgid "Yes, I really want to edit this post."
 msgstr ""
 
@@ -213,4 +232,79 @@ msgstr ""
 #: ../forum/templates/error-403.html:4
 msgid ""
 "This request has been blocked for your user. Logging in again could help."
+msgstr ""
+
+#: ../forum/templates/admin.html:75
+msgid "Create a board"
+msgstr ""
+
+#: ../forum/templates/admin.html:82 ../forum/templates/board.html:63
+msgid "Description"
+msgstr ""
+
+#: ../forum/templates/admin.html:85
+msgid "Roles that have access (leave unselected for all)"
+msgstr ""
+
+#: ../forum/templates/admin.html:101
+msgid "Create a role"
+msgstr ""
+
+#: ../forum/templates/admin.html:108
+msgid "Permitted administrative actions"
+msgstr ""
+
+#: ../forum/templates/admin.html:110
+msgid "Manage boards"
+msgstr ""
+
+#: ../forum/templates/admin.html:111
+msgid "Create roles"
+msgstr ""
+
+#: ../forum/templates/admin.html:112
+msgid "Assign roles"
+msgstr ""
+
+#: ../forum/templates/admin.html:123
+msgid "Assign user roles"
+msgstr ""
+
+#: ../forum/templates/admin.html:128
+msgid "Assign additional roles"
+msgstr ""
+
+#: ../forum/templates/admin.html:134
+msgid "For users"
+msgstr ""
+
+#: ../forum/templates/admin.html:142
+msgid "Assign"
+msgstr ""
+
+#: ../forum/templates/base.html:162
+msgid "Admin panel"
+msgstr ""
+
+#: ../forum/templates/board.html:58
+msgid "Admin: Edit board"
+msgstr ""
+
+#: ../forum/templates/board.html:66
+msgid "Roles for access"
+msgstr ""
+
+#: ../forum/templates/board.html:77
+msgid "Yes, I really want to edit this board."
+msgstr ""
+
+#: ../forum/templates/board.html:86
+msgid "Admin: Delete board"
+msgstr ""
+
+#: ../forum/templates/board.html:91
+#, python-format
+msgid ""
+"Yes, I really want to delete this entire board. I understand that %(board)s "
+"will no longer exist afterwards."
 msgstr ""
