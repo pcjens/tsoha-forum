@@ -50,7 +50,7 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @app.after_request
     def add_csp(response: flask.wrappers.Response) -> flask.wrappers.Response:
         csp = ("default-src 'none'; "
-               "img-src 'self';"
+               "img-src 'self' https:;"
                "style-src 'unsafe-inline' https://fonts.googleapis.com; "
                "font-src https://fonts.gstatic.com;")
         response.headers["Content-Security-Policy"] = csp

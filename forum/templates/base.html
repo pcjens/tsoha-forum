@@ -66,7 +66,7 @@
       #skip-nav-link { grid-area: skip-nav-link; }
       header { grid-area: header; }
       nav { grid-area: nav; }
-      main { grid-area: main; }
+      main { grid-area: main; max-width: 100%; overflow: hidden; }
       footer { grid-area: footer; }
 
       /* Styles for the contents of the main sections */
@@ -96,8 +96,7 @@
       }
       .post-container {
           padding: 10px;
-          margin-top: 20px;
-          margin-bottom: 20px;
+          margin: 20px;
       }
       .post-content h1, .post-content h2, .post-content h3,
       .post-content h4, .post-content h5, .post-content h6 {
