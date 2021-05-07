@@ -21,6 +21,9 @@ Once logged in, you can:
 - Edit your topics and replies.
 - Search for posts.
 
+For testing the administration features, I recommend hosting a local
+instance. Check out [DEPLOYMENT.md](DEPLOYMENT.md) for instructions.
+
 ## Features
 
 The core idea of this project is to create a forum along the lines of
@@ -35,14 +38,21 @@ list of concrete features to be filled out as the project develops:
 - [x] Users can create new topics.
 - [x] Users can post new messages in existing topics.
 - [x] Users can modify their own topics and messages.
-- [x] Messages are written in Markdown, and sanitized with
-      [bleach](https://pypi.org/project/bleach/).
+  - [x] Messages are written in Markdown, and sanitized with
+        [bleach](https://pypi.org/project/bleach/).
 - [x] Users can search for messages powered by [PostgreSQL's full text
       search](https://www.postgresql.org/docs/9.5/textsearch.html).
   - The search uses the correct dictionary for the user's language,
     improving search results for non-English forums.
 - [x] Users can have roles associated with their profile, assignable
       by administrators.
+- [x] Administrators can create new roles with varying degrees of
+      administrative features (any combination of the following):
+  - Creation, edition and removal of entire boards.
+  - Creation of new roles.
+  - Assignment of roles to users.
+  - No admin features are required, roles can just be for board
+    filtering!
 - [x] Administrators can add, remove, and edit boards.
 - [x] Administrators can create secret boards, and specify which roles
       can access them.
@@ -56,7 +66,7 @@ Technical features / highlights:
 - [x] The forum is backwards-compatible database-wise, older versions
       of the database are automatically migrated to new versions. This
       functionality does not come from a library, it is implemented in
-      [forum.database.run_migrations()](https://github.com/pcjens/tsoha-forum/blob/main/forum/database.py).
+      [forum.migrations.run()](https://github.com/pcjens/tsoha-forum/blob/main/forum/migrations.py).
 - [x] All of the code is typechecked and linted with GitHub Actions,
       ensuring that the entire codebase is type-safe (within reason,
       some library interfaces require `Any` usage) and does not have
