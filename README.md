@@ -43,7 +43,7 @@ list of concrete features to be filled out as the project develops:
     improving search results for non-English forums.
 - [x] Users can have roles associated with their profile, assignable
       by administrators.
-- [ ] Administrators can add and remove boards.
+- [x] Administrators can add, remove, and edit boards.
 - [x] Administrators can create secret boards, and specify which roles
       can access them.
 

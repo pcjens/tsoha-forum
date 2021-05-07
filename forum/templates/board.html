@@ -53,7 +53,50 @@
 {% block content %}
 <h3>{{ board_name }}</h3>
 
-<details class="topic-creation-menu">
+{% if admin_scopes is not none and admin_scopes["can_create_boards"] %}
+<details>
+  <summary>{{ _("Admin: Edit board") }}</summary>
+  <form class="form-container" action="/board/{{ board_id }}/edit" method="POST">
+    {{ csrf_token_input }}
+    <label class="form-label" for="board-title">{{ _("Title") }}</label>
+    <input class="form-input" id="board-title" type="text" name="title" minlength=1 required value="{{ board_name }}">
+    <label class="form-label" for="board-description">{{ _("Description") }}</label>
+    <textarea class="form-input" id="board-description" name="description" required>{{ board_description }}</textarea>
+    <label class="form-label" for="board-roles">
+      {{ _("Roles for access") }}
+    </label>
+    <select class="form-input" id="board-roles" name="roles" multiple>
+      {% for role_id, role_name in roles %}
+      <option value="{{ role_id }}" {% if role_id in board_roles %}selected{% endif %}>
+        {{ role_name }}
+      </option>
+      {% endfor %}
+    </select>
+    <label class="form-input">
+      <input type="checkbox" name="confirm_edit" required>
+      {{ _("Yes, I really want to edit this board.") }}
+    </label>
+    <input type="hidden" name="redirect_url" value="{{ current_path }}">
+    <button class="form-submit" type="submit">
+      {{ _("Edit") }}
+    </button>
+  </form>
+</details>
+<details>
+  <summary>{{ _("Admin: Delete board") }}</summary>
+  <form class="form-container" action="/board/{{ board_id }}/delete" method="POST">
+    {{ csrf_token_input }}
+    <label class="form-input">
+      <input type="checkbox" name="confirm_deletion" required>
+      {{ _("Yes, I really want to delete this entire board. I understand that %(board)s will no longer exist afterwards.", board=board_name) }}
+    </label>
+    <br class="for-no-css">
+    <button class="form-submit" type="submit">{{ _("Delete") }}</button>
+  </form>
+</details>
+{% endif %}
+
+<details>
   <summary>{{ _("Create a new topic") }}</summary>
   <form class="form-container" action="/board/{{ board_id }}" method="POST">
     {{ csrf_token_input }}

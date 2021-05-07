@@ -221,6 +221,35 @@ class ForumDatabase: # pylint: disable = R0904
         self.database.session.commit()
         return topic_id
 
+    def edit_board(self, board_id: int, title: str, description: str, roles: List[str]) -> None:
+        """Updates the board to the new values."""
+
+        sql = "update boards set title = :title, description = :desc where board_id = :board_id"
+        self.database.session.execute(sql, {
+            "title": title,
+            "desc": description,
+            "board_id": board_id
+        })
+        self.database.session.commit()
+
+        sql = "delete from board_roles where board_id = :board_id"
+        self.database.session.execute(sql, { "board_id": board_id })
+        self.database.session.commit()
+        if len(roles) > 0:
+            board_role_tuples = []
+            for role_id in roles:
+                board_role_tuples.append({ "board_id": board_id, "role_id": role_id })
+            sql = "insert into board_roles (board_id, role_id) values (:board_id, :role_id)"
+            self.database.session.execute(sql, board_role_tuples)
+            self.database.session.commit()
+
+    def delete_board(self, board_id: int) -> None:
+        """Deletes the board."""
+
+        sql = "update boards set deleted = TRUE where board_id = :board_id"
+        self.database.session.execute(sql, { "board_id": board_id })
+        self.database.session.commit()
+
     def create_board(self, title: str, description: str, roles: List[str]) -> int:
         """Creates a new board with the given title, description and roles."""
 
@@ -230,13 +259,15 @@ class ForumDatabase: # pylint: disable = R0904
             "title": title,
             "description": description
         }).scalar()
-
-        board_role_tuples = []
-        for role_id in roles:
-            board_role_tuples.append({ "board_id": board_id, "role_id": role_id })
-        sql = "insert into board_roles (board_id, role_id) values (:board_id, :role_id)"
-        self.database.session.execute(sql, board_role_tuples)
         self.database.session.commit()
+
+        if len(roles) > 0:
+            board_role_tuples = []
+            for role_id in roles:
+                board_role_tuples.append({ "board_id": board_id, "role_id": role_id })
+            sql = "insert into board_roles (board_id, role_id) values (:board_id, :role_id)"
+            self.database.session.execute(sql, board_role_tuples)
+            self.database.session.commit()
 
         return board_id
 
@@ -276,7 +307,8 @@ class ForumDatabase: # pylint: disable = R0904
         for row in result:
             user_roles.add(int(row[0]))
 
-        sql = "select board_id, role_id from boards left join board_roles using (board_id)"
+        sql = ("select board_id, role_id from boards left join board_roles using (board_id) "
+               "where deleted = FALSE")
         result = self.database.session.execute(sql).fetchall()
         board_roles: Set[int] = set()
         for row in result:
@@ -284,10 +316,21 @@ class ForumDatabase: # pylint: disable = R0904
                 board_roles.add(int(row[0]))
         return board_roles
 
+    def get_board_role_ids(self, board_id: int) -> List[int]:
+        """Returns the role ids that are allowed to use the board, or an empty
+        list if everyone is."""
+
+        sql = "select role_id from board_roles where board_id = :board_id"
+        result = self.database.session.execute(sql, { "board_id": board_id }).fetchall()
+        role_ids: List[int] = []
+        for row in result:
+            role_ids.append(int(row[0]))
+        return role_ids
+
     def get_boards(self) -> List[Any]:
         """Returns a list of boards with the relevant information for index.html's listing."""
 
-        sql = "select board_id, title, description from boards"
+        sql = "select board_id, title, description from boards order by title"
         results = self.database.session.execute(sql).fetchall()
         boards = []
         for result in results:
@@ -398,15 +441,18 @@ class ForumDatabase: # pylint: disable = R0904
         user: Optional[str] = self.database.session.execute(sql, { "user_id": user_id }).scalar()
         return user
 
-    def get_board_name(self, board_id: Optional[int]) -> Optional[str]:
+    def get_board_data(self, board_id: Optional[int]) -> Optional[Any]:
         """Returns the name of the board with the given id, or None if there is no
         board with the id, or the id is None."""
 
         if board_id is None:
             return None
-        sql = "select title from boards where board_id = :board_id"
-        title: Optional[str] = self.database.session.execute(sql, { "board_id": board_id }).scalar()
-        return title
+        sql = "select title, description from boards where board_id = :board_id"
+        result = self.database.session.execute(sql, { "board_id": board_id }).first()
+        if result is None:
+            return None
+        title, description = result
+        return title, description
 
 
 def setup(app: Flask) -> Optional[ForumDatabase]:

@@ -162,15 +162,23 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
     @login_required
     @templated("board.html")
     def board(board_id: int) -> Any:
-        board_name = database.get_board_name(board_id)
-        if board_name is None:
+        board = database.get_board_data(board_id)
+        if board is None:
             return { "error_code": 404 }
         if board_id not in database.get_board_access(session["user_id"]):
             return { "error_code": 404 }
+        board_name, board_description = board
+        board_roles = None
+        admin_scopes = database.get_admin_scopes(session["user_id"])
+        if admin_scopes is not None and admin_scopes["can_create_boards"]:
+            board_roles = database.get_board_role_ids(board_id)
         return {
             "board_id": board_id,
             "board_name": board_name,
-            "topics": database.get_topics(board_id)
+            "board_description": board_description,
+            "board_roles": board_roles,
+            "topics": database.get_topics(board_id),
+            "roles": database.get_roles()
         }
 
     @app.route("/board/<int:board_id>/topic/<int:topic_id>")
@@ -182,9 +190,12 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         posts = database.get_posts(topic_id, session["user_id"])
         if len(posts) == 0:
             return { "error_code": 404 }
+        board = database.get_board_data(board_id)
+        assert board is not None # Can't be a topic without a board
+        board_name, board_description = board
         return {
             "board_id": board_id,
-            "board_name": database.get_board_name(board_id),
+            "board_name": board_name,
             "topic_id": topic_id,
             "topic_name": posts[0][2],
             "posts": posts
@@ -340,3 +351,40 @@ def setup(app: Flask, database: ForumDatabase) -> None: # pylint: disable = R091
         users = request.form.getlist("users")
         database.assign_roles(roles, users)
         return redirect(request.form["redirect_url"])
+
+    @app.route("/board/<int:board_id>/edit", methods = ["POST"])
+    @csrf_token_required
+    @admin_required
+    def edit_board(board_id: int) -> Any:
+        admin_scopes = database.get_admin_scopes(session["user_id"])
+        assert admin_scopes is not None # Because of @admin_required
+        if not admin_scopes["can_create_boards"]:
+            return fill_and_render_template("error-403.html", {}), 403
+
+        redirect_url = "/board/{}".format(board_id)
+        if board_id not in database.get_board_access(session["user_id"]):
+            return redirect(redirect_url)
+        if "confirm_edit" not in request.form:
+            return redirect(redirect_url)
+        title = request.form["title"]
+        description = request.form["description"]
+        roles = request.form.getlist("roles")
+        database.edit_board(board_id, title, description, roles)
+        return redirect("/")
+
+    @app.route("/board/<int:board_id>/delete", methods = ["POST"])
+    @csrf_token_required
+    @login_required
+    def delete_board(board_id: int) -> Any:
+        admin_scopes = database.get_admin_scopes(session["user_id"])
+        assert admin_scopes is not None # Because of @admin_required
+        if not admin_scopes["can_create_boards"]:
+            return fill_and_render_template("error-403.html", {}), 403
+
+        err_redirect_url = "/board/{}".format(board_id)
+        if board_id not in database.get_board_access(session["user_id"]):
+            return redirect(err_redirect_url)
+        if "confirm_deletion" not in request.form:
+            return redirect(err_redirect_url)
+        database.delete_board(board_id)
+        return redirect("/")
